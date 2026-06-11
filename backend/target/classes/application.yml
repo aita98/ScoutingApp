@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: scout-backend
+  datasource:
+    url: jdbc:postgresql://localhost:5432/scout_db
+    username: postgres
+    password: password
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+server:
+  address: 0.0.0.0
+  port: 8080
+
+api-football:
+  key: YOUR_API_KEY_HERE
+  url: https://v3.football.api-sports.io/
+
+football-data:
+  key: 8bb3a1c55e9046b4b51fd3baad39c09f
+  url: https://api.football-data.org/v4/
+
+thesportsdb:
+  key: 3
+  url: https://www.thesportsdb.com/api/v1/json/
+
+transfermarkt:
+  url: http://localhost:8000/
+
+logging:
+  level:
+    com.scoutapp: DEBUG
