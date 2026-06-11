@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.scoutapp-mergeDebugResources-55:/values-v16/values-v16.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Enrico\\.gradle\\caches\\8.13\\transforms\\f3cc9489e0eada07ff5c8a4a34db46af\\transformed\\core-1.12.0\\res\\values-v16\\values-v16.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "65",
+                        "endOffsets": "116"
+                    }
+                }
+            ]
+        }
+    ]
+}
