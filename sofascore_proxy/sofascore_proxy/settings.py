@@ -11,7 +11,7 @@ ALLOWED_HOSTS = ["*"]
 INSTALLED_APPS = [
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
-    "api",
+    "api.apps.ApiConfig",
 ]
 
 ROOT_URLCONF = "sofascore_proxy.urls"

@@ -1,16 +1,22 @@
 package com.scoutapp.dto;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Data
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 public class ComparisonDto {
     private PlayerSummary playerA;
     private PlayerSummary playerB;
 
     @Data
     @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
     public static class PlayerSummary {
         private String name;
         private String club;

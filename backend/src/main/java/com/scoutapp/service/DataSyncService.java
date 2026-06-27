@@ -12,7 +12,9 @@ import com.scoutapp.repository.TransfermarktRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.scheduling.annotation.Async;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -31,7 +33,9 @@ public class DataSyncService {
     private final ScoutingService scoutingService;
     private final NotificationService notificationService;
     private final TransfermarktRepository transfermarktRepository;
+    private final DiscoveryService discoveryService;
     private final DataSyncService self;
+    private boolean isSyncing = false;
 
     public DataSyncService(
             FootballDataClient footballDataClient,
@@ -42,6 +46,7 @@ public class DataSyncService {
             ScoutingService scoutingService,
             NotificationService notificationService,
             TransfermarktRepository transfermarktRepository,
+            DiscoveryService discoveryService,
             @Lazy DataSyncService self) {
         this.footballDataClient = footballDataClient;
         this.sportsDbClient = sportsDbClient;
@@ -51,10 +56,10 @@ public class DataSyncService {
         this.scoutingService = scoutingService;
         this.notificationService = notificationService;
         this.transfermarktRepository = transfermarktRepository;
+        this.discoveryService = discoveryService;
         this.self = self;
     }
 
-    @Transactional
     public void syncLeaguePlayers(String competitionCode) {
         log.info("Starting sync for competition {}", competitionCode);
         
@@ -64,7 +69,7 @@ public class DataSyncService {
         List<Map<String, Object>> scorers = (List<Map<String, Object>>) response.get("scorers");
         for (Map<String, Object> scorer : scorers) {
             try {
-                processScorerData(scorer, 2024);
+                self.processScorerData(scorer, 2024);
             } catch (Exception e) {
                 log.error("Error processing scorer: {}", e.getMessage());
             }
@@ -73,35 +78,56 @@ public class DataSyncService {
         log.info("Sync completed for competition {}", competitionCode);
     }
 
-    @Transactional
+    @Async
     public void syncAllLeagues() {
-        List<String> leagues = List.of("PL", "PD", "SA", "BL1", "FL1", "ELC");
-        for (String league : leagues) {
-            try {
-                syncLeaguePlayers(league);
-                Thread.sleep(2000); 
-            } catch (Exception e) {
-                log.error("Failed to sync league {}: {}", league, e.getMessage());
+        synchronized (this) {
+            if (isSyncing) {
+                log.warn("Sync already in progress, skipping...");
+                return;
+            }
+            isSyncing = true;
+        }
+        
+        try {
+            List<String> leagues = List.of("PL", "PD", "SA", "BL1", "FL1", "ELC");
+            for (String league : leagues) {
+                try {
+                    syncLeaguePlayers(league);
+                    // Pause outside transaction to respect API limits
+                    Thread.sleep(10000); 
+                } catch (Exception e) {
+                    log.error("Failed to sync league {}: {}", league, e.getMessage());
+                }
+            }
+        } finally {
+            synchronized (this) {
+                isSyncing = false;
             }
         }
     }
 
-    @Transactional
     public void syncAllPlayersWithTM() {
         log.info("Starting bulk sync with Transfermarkt for all players...");
         List<Player> players = playerRepository.findAll();
         for (Player player : players) {
             try {
-                transfermarktRepository.syncPlayerProfile(player.getId(), null);
-                log.info("Synced {} with Transfermarkt", player.getName());
-                Thread.sleep(1000); // Rate limit respect
+                self.syncSinglePlayerWithTM(player);
+                Thread.sleep(2000); // Rate limit respect
             } catch (Exception e) {
                 log.error("Failed to sync {} with TM: {}", player.getName(), e.getMessage());
             }
         }
     }
 
-    private void processScorerData(Map<String, Object> scorer, Integer season) {
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void syncSinglePlayerWithTM(Player player) {
+        discoveryService.discoverAndLink(player);
+        transfermarktRepository.syncPlayerProfile(player.getId(), null);
+        log.info("Synced {} with Transfermarkt", player.getName());
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processScorerData(Map<String, Object> scorer, Integer season) {
         Map<String, Object> playerData = (Map<String, Object>) scorer.get("player");
         Map<String, Object> teamData = (Map<String, Object>) scorer.get("team");
         
@@ -159,10 +185,29 @@ public class DataSyncService {
         player.getStatistics().removeIf(ps -> ps.getSeason().equals(stats.getSeason()));
         player.getStatistics().add(stats);
 
+        // Calcolo percentuali per scorer sync
+        double appRate = Math.min(100.0, ((double) stats.getAppearances() / 38.0) * 100.0);
+        double startPerc = stats.getAppearances() > 0 ? ((double) stats.getStarts() / (double) stats.getAppearances()) * 100.0 : 0.0;
+        
+        player.setAppearancePercentage(appRate);
+        player.setStarterPercentage(startPerc);
+
         player.setTalentScore(scoutingService.calculateTalentScore(player, stats));
         player.setHiddenGemScore(scoutingService.calculateHiddenGemScore(player, stats));
 
+        // NUOVA LOGICA: Popolamento automatico Tab (OTW e Hidden Gems)
+        player.setIsConsigliato(player.getTalentScore() >= 75.0 && (player.getAge() != null && player.getAge() <= 24));
+        player.setIsHiddenGem(player.getHiddenGemScore() >= 70.0 && (player.getAge() != null && player.getAge() <= 23));
+
         playerRepository.save(player);
+        
+        // Auto-discover IDs on other platforms
+        try {
+            discoveryService.discoverAndLink(player);
+        } catch (Exception e) {
+            log.warn("Auto-linking failed for {}: {}", player.getName(), e.getMessage());
+        }
+
         generateEvents(player, oldTalentScore, oldHiddenGemScore, oldClub);
     }
 
@@ -170,7 +215,7 @@ public class DataSyncService {
         if (player.getPhotoUrl() != null && !player.getPhotoUrl().isEmpty()) return;
 
         try {
-            Thread.sleep(500);
+            Thread.sleep(1000); // Increased delay
             Map<String, Object> sportsDbResponse = sportsDbClient.searchPlayer(player.getName());
             if (sportsDbResponse != null && sportsDbResponse.get("player") != null) {
                 List<Map<String, Object>> players = (List<Map<String, Object>>) sportsDbResponse.get("player");
@@ -185,7 +230,11 @@ public class DataSyncService {
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
         } catch (Exception e) {
-            log.warn("Could not enrich player {} with SportsDB: {}", player.getName(), e.getMessage());
+            if (e.getMessage() != null && e.getMessage().contains("429")) {
+                log.warn("Rate limited by SportsDB for player {}", player.getName());
+            } else {
+                log.warn("Could not enrich player {} with SportsDB: {}", player.getName(), e.getMessage());
+            }
         }
     }
 

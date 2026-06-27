@@ -1,20 +1,22 @@
 package com.scoutapp.dto.transfermarkt;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import lombok.Data;
 import java.util.List;
 import java.util.Map;
 
 @Data
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class TransfermarktProfileDto {
     private String id;
     private String name;
     private String fullName;
     private String dateOfBirth;
-    private Object placeOfBirth; // Can be Map with city/country
+    private Object placeOfBirth; 
     private Integer age;
-    private String height;
+    private Object height;
     private List<String> citizenship;
-    private String position;
+    private Object position;
     private String foot;
     private Map<String, Object> club;
     private Object marketValue;
@@ -22,40 +24,31 @@ public class TransfermarktProfileDto {
     private String contractExpires;
     private List<String> socialMedia;
     private String imageUrl;
-    private List<TransfermarktStatDto> stats;
-
-    @Data
-    public static class TransfermarktStatDto {
-        private Object competition; // Can be String or Map
-        private Integer appearances;
-        private Integer goals;
-        private Integer assists;
-        private Integer yellowCards;
-        private Integer redCards;
-        private Integer minutesPlayed;
-
-        public String getCompetitionName() {
-            if (competition instanceof String) return (String) competition;
-            if (competition instanceof Map) {
-                return (String) ((Map<?, ?>) competition).get("name");
-            }
-            return null;
-        }
-    }
+    private List<Map<String, Object>> stats;
 
     public String getClubName() {
-        if (club != null) return (String) club.get("name");
+        if (club != null && club.get("name") != null) return club.get("name").toString();
+        return null;
+    }
+
+    public String getPositionName() {
+        if (position instanceof String) return (String) position;
+        if (position instanceof Map) {
+            Map<?, ?> m = (Map<?, ?>) position;
+            if (m.get("main") != null) return m.get("main").toString();
+        }
         return null;
     }
 
     public String getMarketValueDisplay() {
+        if (marketValue == null) return "N/A";
         if (marketValue instanceof String) return (String) marketValue;
         if (marketValue instanceof Map) {
             Map<?, ?> map = (Map<?, ?>) marketValue;
-            if (map.containsKey("display")) return (String) map.get("display");
+            if (map.containsKey("display")) return map.get("display").toString();
             if (map.containsKey("value")) return map.get("value").toString();
         }
         if (marketValue instanceof Number) return marketValue.toString();
-        return null;
+        return "N/A";
     }
 }

@@ -14,21 +14,23 @@ public interface PlayerRepository extends JpaRepository<Player, Long> {
     Optional<Player> findByApiFootballIdWithStats(Integer apiFootballId);
 
     Optional<Player> findByApiFootballId(Integer apiFootballId);
+
+    Optional<Player> findByTransfermarktId(String transfermarktId);
+
     List<Player> findTop10ByOrderByTalentScoreDesc();
     List<Player> findTop10ByOrderByHiddenGemScoreDesc();
     
     @Query("SELECT p FROM Player p " +
            "WHERE (p.age IS NULL OR p.age <= 24) " +
-           "AND (p.marketValue IS NULL OR p.marketValue < 10000000) " +
-           "AND (p.talentScore >= 80) " +
+           "AND (p.marketValue IS NULL OR p.marketValue < 15000000) " +
+           "AND (p.talentScore >= 75) " +
            "ORDER BY p.talentScore DESC")
-    List<Player> findRecommendedProspects();
+    List<Player> findOneToWatch();
 
     @Query("SELECT p FROM Player p " +
-           "WHERE (p.age IS NULL OR p.age <= 22) " +
-           "AND (p.marketValue IS NULL OR p.marketValue < 5000000) " +
-           "AND (p.hiddenGemScore >= 75) " +
-           "AND (p.talentScore < 80 OR p.talentScore IS NULL) " +
+           "WHERE (p.age IS NULL OR p.age <= 23) " +
+           "AND (p.marketValue IS NULL OR p.marketValue < 7000000) " +
+           "AND (p.hiddenGemScore >= 70) " +
            "ORDER BY p.hiddenGemScore DESC")
     List<Player> findHiddenGems();
 }

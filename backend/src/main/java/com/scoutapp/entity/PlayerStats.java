@@ -29,4 +29,7 @@ public class PlayerStats {
     private Integer assists;
     private Integer yellowCards;
     private Integer redCards;
+    
+    private Double appearancePercentage;
+    private Double starterPercentage;
 }

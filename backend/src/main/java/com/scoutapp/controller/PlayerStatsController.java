@@ -42,40 +42,78 @@ public class PlayerStatsController {
         stats.put("pressures", 0);
 
         // =========================================================================
-        // STEP 1: RACCOLTA DATI STANDARD DA TRANSFERMARKT (LIVE)
+        // STEP 1: SOLUZIONE AGGRESSIVA PER LEISTUNGSDATEN (GESTIONE REDIRECT)
         // =========================================================================
-        String tmUrl = "https://www.transfermarkt.com/player/leistungsdaten/spieler/" + tmId;
+        // Usiamo l'URL numerico diretto. Jsoup seguirà il redirect allo slug corretto.
+        String tmUrl = "https://www.transfermarkt.com/player/leistungsdaten/spieler/" + tmId + "/plus/0?saison=2024";
         String userAgent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36";
 
         try {
-            System.out.println("[TM FETCH] Richiesta live a Transfermarkt: " + tmUrl);
-            Document doc = Jsoup.connect(tmUrl).userAgent(userAgent).timeout(10000).get();
+            System.out.println("[TM FETCH] Richiesta con follow-redirect forzato su ID: " + tmId);
             
-            // Cerchiamo il box dei dati di performance totali della stagione
+            Document doc = Jsoup.connect(tmUrl)
+                                .userAgent(userAgent)
+                                .header("Accept", "text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8")
+                                .header("Accept-Language", "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7")
+                                .header("Cache-Control", "no-cache")
+                                .header("Pragma", "no-cache")
+                                .followRedirects(true)
+                                .timeout(15000)
+                                .get();
+            
+            System.out.println("[TM FETCH] Arrivato all'URL reale dopo redirect: " + doc.location());
+
             Element table = doc.selectFirst("table.items");
+            if (table == null) {
+                table = doc.selectFirst("table[class*=items]");
+            }
+
             if (table != null) {
                 Element tfoot = table.selectFirst("tfoot");
                 if (tfoot != null) {
-                    Elements cells = tfoot.select("tr td");
-                    if (cells.size() >= 4) {
-                        // Pulizia dei dati (TM usa il trattino '-' se il dato è zero)
-                        String mpText = cells.get(1).text().trim().replace("-", "0").replace(".", "");
-                        String gText = cells.get(2).text().trim().replace("-", "0").replace(".", "");
-                        String aText = cells.get(3).text().trim().replace("-", "0").replace(".", "");
+                    Elements rows = tfoot.select("tr");
+                    Element targetRow = null;
+                    
+                    for (Element row : rows) {
+                        String rowText = row.text().toLowerCase();
+                        if (rowText.contains("totale") || rowText.contains("total") || rowText.contains("bilancio")) {
+                            targetRow = row;
+                            break;
+                        }
+                    }
 
-                        stats.put("apps", Integer.parseInt(mpText.isEmpty() ? "0" : mpText));
-                        stats.put("goals", Integer.parseInt(gText.isEmpty() ? "0" : gText));
-                        stats.put("assists", Integer.parseInt(aText.isEmpty() ? "0" : aText));
+                    if (targetRow != null) {
+                        Elements cells = targetRow.select("td");
                         
-                        System.out.println("[TM FETCH] SUCCESS! Presenze: " + stats.get("apps") + 
-                                           " | Gol: " + stats.get("goals") + " | Assist: " + stats.get("assists"));
+                        java.util.function.Function<String, String> cleanStat = (text) -> {
+                            String clean = text.trim().replace("-", "0").replace(".", "").replace("'", "").replaceAll("\\s+", "");
+                            return clean.isEmpty() ? "0" : clean;
+                        };
+
+                        if (cells.size() >= 4) {
+                            String mpText = cleanStat.apply(cells.get(1).text());
+                            String gText = cleanStat.apply(cells.get(2).text());
+                            String aText = cleanStat.apply(cells.get(3).text());
+                            String minsText = cleanStat.apply(cells.get(cells.size() - 1).text());
+
+                            stats.put("apps", Integer.parseInt(mpText));
+                            stats.put("goals", Integer.parseInt(gText));
+                            stats.put("assists", Integer.parseInt(aText));
+                            stats.put("minutes", Integer.parseInt(minsText));
+
+                            System.out.println("[TM FETCH] SUCCESS! apps: " + stats.get("apps") + 
+                                               " | goals: " + stats.get("goals") + " | assists: " + stats.get("assists") +
+                                               " | mins: " + stats.get("minutes"));
+                        }
+                    } else {
+                        System.out.println("[TM FETCH] Errore: Riga riassuntiva non trovata nel tfoot.");
                     }
                 }
             } else {
-                System.out.println("[TM FETCH] ATTENZIONE: Tabella '.items' non trovata. Controllo struttura.");
+                System.out.println("[TM FETCH] ERRORE: La tabella dei dati è ancora assente.");
             }
         } catch (Exception e) {
-            System.out.println("[TM FETCH] ERRORE durante la chiamata a Transfermarkt: " + e.getMessage());
+            System.out.println("[TM FETCH] Eccezione intercettata: " + e.getMessage());
         }
 
         // =========================================================================
@@ -94,15 +132,28 @@ public class PlayerStatsController {
             if (map.containsKey("stats")) {
                 Map<String, Object> fbrefStats = (Map<String, Object>) map.get("stats");
                 
+                // Helper per gestire conversioni sicure da JSON (che spesso legge numeri come Double)
+                java.util.function.Function<Object, Integer> toInt = (obj) -> {
+                    if (obj == null) return 0;
+                    if (obj instanceof Number) return ((Number) obj).intValue();
+                    try { return Integer.parseInt(obj.toString()); } catch (Exception e) { return 0; }
+                };
+
+                java.util.function.Function<Object, Double> toDouble = (obj) -> {
+                    if (obj == null) return 0.0;
+                    if (obj instanceof Number) return ((Number) obj).doubleValue();
+                    try { return Double.parseDouble(obj.toString()); } catch (Exception e) { return 0.0; }
+                };
+
                 // Uniamo i dati avanzati (xG, xA, passaggi chiave, ecc.)
-                if (fbrefStats.containsKey("xG")) stats.put("xG", fbrefStats.get("xG"));
-                if (fbrefStats.containsKey("xA")) stats.put("xA", fbrefStats.get("xA"));
-                if (fbrefStats.containsKey("key_passes")) stats.put("key_passes", fbrefStats.get("key_passes"));
-                if (fbrefStats.containsKey("progressive_passes")) stats.put("progressive_passes", fbrefStats.get("progressive_passes"));
-                if (fbrefStats.containsKey("progressive_carries")) stats.put("progressive_carries", fbrefStats.get("progressive_carries"));
-                if (fbrefStats.containsKey("pressures")) stats.put("pressures", fbrefStats.get("pressures"));
-                if (fbrefStats.containsKey("minutes")) stats.put("minutes", fbrefStats.get("minutes"));
-                if (fbrefStats.containsKey("season")) stats.put("season", fbrefStats.get("season"));
+                if (fbrefStats.containsKey("xG")) stats.put("xG", toDouble.apply(fbrefStats.get("xG")));
+                if (fbrefStats.containsKey("xA")) stats.put("xA", toDouble.apply(fbrefStats.get("xA")));
+                if (fbrefStats.containsKey("key_passes")) stats.put("key_passes", toInt.apply(fbrefStats.get("key_passes")));
+                if (fbrefStats.containsKey("progressive_passes")) stats.put("progressive_passes", toInt.apply(fbrefStats.get("progressive_passes")));
+                if (fbrefStats.containsKey("progressive_carries")) stats.put("progressive_carries", toInt.apply(fbrefStats.get("progressive_carries")));
+                if (fbrefStats.containsKey("pressures")) stats.put("pressures", toInt.apply(fbrefStats.get("pressures")));
+                if (fbrefStats.containsKey("minutes")) stats.put("minutes", toInt.apply(fbrefStats.get("minutes")));
+                if (fbrefStats.containsKey("season")) stats.put("season", fbrefStats.get("season").toString());
             }
             
             System.out.println("[FBREF FETCH] SUCCESS! Dati avanzati uniti.");

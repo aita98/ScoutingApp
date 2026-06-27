@@ -24,15 +24,9 @@ public class SystemController {
 
     @PostMapping("/startup")
     public ResponseEntity<Map<String, String>> startup() {
-        // Avvia la sincronizzazione globale e l'analisi dei talenti
-        new Thread(() -> {
-            try {
-                dataSyncService.syncAllLeagues();
-            } catch (Exception e) {
-                log.error("Startup sync failed", e);
-            }
-        }).start();
-        return ResponseEntity.ok(Map.of("message", "Backend Services Starting..."));
+        // Avvia la sincronizzazione globale in background
+        dataSyncService.syncAllLeagues();
+        return ResponseEntity.ok(Map.of("message", "Backend Sync Started in background..."));
     }
 
     @PostMapping("/reset-data")

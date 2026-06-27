@@ -1,0 +1,14 @@
+2026/06/21-11:23:17.831 5110 Reusing MANIFEST D:\Progetti\FootballScouting\sofascore_proxy\chrome-profile\Default\Local Storage\leveldb/MANIFEST-000001
+2026/06/21-11:23:17.835 5110 Recovering log #7
+2026/06/21-11:23:17.835 5110 Level-0 table #10: started
+2026/06/21-11:23:17.895 5110 Level-0 table #10: 119688 bytes OK
+2026/06/21-11:23:18.037 5110 Delete type=0 #5
+2026/06/21-11:23:18.037 5110 Delete type=0 #7
+2026/06/21-11:23:18.038 3d88 Compacting 4@0 + 0@1 files
+2026/06/21-11:23:18.188 3d88 Generated table #12@0: 93 keys, 330761 bytes
+2026/06/21-11:23:18.188 3d88 Compacted 4@0 + 0@1 files => 330761 bytes
+2026/06/21-11:23:18.236 3d88 compacted to: files[ 0 1 0 0 0 0 0 ]
+2026/06/21-11:23:18.237 3d88 Delete type=2 #3
+2026/06/21-11:23:18.237 3d88 Delete type=2 #6
+2026/06/21-11:23:18.262 3d88 Delete type=2 #8
+2026/06/21-11:23:18.262 3d88 Delete type=2 #10

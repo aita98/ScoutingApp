@@ -1,0 +1,11 @@
+2026/06/21-11:22:08.509 1984 Reusing MANIFEST D:\Progetti\FootballScouting\sofascore_proxy\chrome-profile\Default\Local Storage\leveldb/MANIFEST-000001
+2026/06/21-11:22:08.512 1984 Recovering log #3
+2026/06/21-11:22:08.513 1984 Level-0 table #3: started
+2026/06/21-11:22:08.574 1984 Level-0 table #3: 189357 bytes OK
+2026/06/21-11:22:08.658 1984 Delete type=0 #3
+2026/06/21-11:22:25.093 6b48 Level-0 table #6: started
+2026/06/21-11:22:25.268 6b48 Level-0 table #6: 92297 bytes OK
+2026/06/21-11:22:25.496 6b48 Delete type=0 #4
+2026/06/21-11:22:42.944 1984 Level-0 table #8: started
+2026/06/21-11:22:43.000 6b48 Current memtable full; waiting...
+2026/06/21-11:22:43.150 1984 Level-0 table #8: 13133 bytes OK

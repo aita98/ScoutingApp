@@ -1,5 +1,5 @@
 from django.urls import path, include
 
 urlpatterns = [
-    path("sofascore/", include("api.urls")),
+    path("fbref/", include("api.urls")),
 ]

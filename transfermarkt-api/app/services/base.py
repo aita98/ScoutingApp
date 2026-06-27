@@ -3,7 +3,10 @@ from typing import Optional
 from xml.etree import ElementTree
 
 import requests
+import logging
 from bs4 import BeautifulSoup
+
+logger = logging.getLogger(__name__)
 from fastapi import HTTPException
 from lxml import etree
 from requests import Response, TooManyRedirects
@@ -55,13 +58,22 @@ class TransfermarktBase:
                         "Safari/537.36"
                     ),
                 },
+                timeout=30,
             )
         except TooManyRedirects:
             raise HTTPException(status_code=404, detail=f"Not found for url: {url}")
+        except requests.exceptions.Timeout:
+            raise HTTPException(status_code=504, detail=f"Timeout for url: {url}")
         except ConnectionError:
             raise HTTPException(status_code=500, detail=f"Connection error for url: {url}")
         except Exception as e:
             raise HTTPException(status_code=500, detail=f"Error for url: {url}. {e}")
+
+        if response.status_code == 403:
+             logger.warning(f"Transfermarkt 403 Forbidden for {url}. Possible Cloudflare challenge.")
+             # We might want to return a more specific error or even a partial success if possible
+             raise HTTPException(status_code=403, detail="Access denied by Transfermarkt (Cloudflare)")
+
         if 400 <= response.status_code < 500:
             raise HTTPException(
                 status_code=response.status_code,
