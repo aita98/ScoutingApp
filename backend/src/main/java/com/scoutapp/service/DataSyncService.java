@@ -16,10 +16,14 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.scheduling.annotation.Async;
 
+import com.scoutapp.client.TransfermarktClient;
+import com.scoutapp.dto.transfermarkt.TransfermarktCompetitionClubsDto;
+import com.scoutapp.dto.transfermarkt.TransfermarktPlayerDto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -34,6 +38,8 @@ public class DataSyncService {
     private final NotificationService notificationService;
     private final TransfermarktRepository transfermarktRepository;
     private final DiscoveryService discoveryService;
+    private final TransfermarktClient transfermarktClient;
+    private final TransfermarktSyncService transfermarktSyncService;
     private final DataSyncService self;
     private boolean isSyncing = false;
 
@@ -47,6 +53,8 @@ public class DataSyncService {
             NotificationService notificationService,
             TransfermarktRepository transfermarktRepository,
             DiscoveryService discoveryService,
+            TransfermarktClient transfermarktClient,
+            TransfermarktSyncService transfermarktSyncService,
             @Lazy DataSyncService self) {
         this.footballDataClient = footballDataClient;
         this.sportsDbClient = sportsDbClient;
@@ -57,25 +65,64 @@ public class DataSyncService {
         this.notificationService = notificationService;
         this.transfermarktRepository = transfermarktRepository;
         this.discoveryService = discoveryService;
+        this.transfermarktClient = transfermarktClient;
+        this.transfermarktSyncService = transfermarktSyncService;
         this.self = self;
     }
 
     public void syncLeaguePlayers(String competitionCode) {
-        log.info("Starting sync for competition {}", competitionCode);
+        log.info("Starting Transfermarkt sync for competition {}", competitionCode);
         
-        Map<String, Object> response = footballDataClient.getTopScorers(competitionCode);
-        if (response == null || !response.containsKey("scorers")) return;
-
-        List<Map<String, Object>> scorers = (List<Map<String, Object>>) response.get("scorers");
-        for (Map<String, Object> scorer : scorers) {
+        List<TransfermarktCompetitionClubsDto.ClubDto> clubs = transfermarktClient.getClubs(competitionCode, "2024");
+        for (TransfermarktCompetitionClubsDto.ClubDto club : clubs) {
+            log.info("Syncing club: {} ({})", club.getName(), club.getId());
+            List<TransfermarktPlayerDto> players = transfermarktClient.getClubPlayers(club.getId(), "2024");
+            
+            for (TransfermarktPlayerDto tmPlayer : players) {
+                try {
+                    self.processTransfermarktPlayerData(tmPlayer, club.getName(), competitionCode);
+                } catch (Exception e) {
+                    log.error("Error processing player {}: {}", tmPlayer.getName(), e.getMessage());
+                }
+            }
+            
             try {
-                self.processScorerData(scorer, 2024);
-            } catch (Exception e) {
-                log.error("Error processing scorer: {}", e.getMessage());
+                // Pause to respect API limits
+                Thread.sleep(5000); 
+            } catch (InterruptedException e) {
+                Thread.currentThread().interrupt();
             }
         }
         
         log.info("Sync completed for competition {}", competitionCode);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void processTransfermarktPlayerData(TransfermarktPlayerDto tmPlayer, String clubName, String leagueCode) {
+        Player player = playerRepository.findByTransfermarktId(tmPlayer.getId())
+                .orElse(Player.builder()
+                        .transfermarktId(tmPlayer.getId())
+                        .talentScore(0.0)
+                        .hiddenGemScore(0.0)
+                        .statistics(new ArrayList<>())
+                        .build());
+
+        player.setName(tmPlayer.getName());
+        player.setClub(clubName);
+        player.setLeague(leagueCode);
+        player.setAge(tmPlayer.getAge());
+        player.setPosition(tmPlayer.getPosition());
+        player.setPhotoUrl(tmPlayer.getImageUrl());
+        player.setLastUpdated(LocalDateTime.now());
+
+        playerRepository.save(player);
+
+        // Aggiorna le statistiche e calcola gli score
+        try {
+            transfermarktSyncService.syncAndAggregateStats(player.getId(), player.getTransfermarktId(), "24/25");
+        } catch (Exception e) {
+            log.error("Failed to sync stats for player {}: {}", player.getName(), e.getMessage());
+        }
     }
 
     @Async
@@ -89,12 +136,11 @@ public class DataSyncService {
         }
         
         try {
-            List<String> leagues = List.of("PL", "PD", "SA", "BL1", "FL1", "ELC");
+            // Updated to match the "Leagues" tab in the app
+            List<String> leagues = List.of("IT1", "GB1", "ES1", "L1", "FR1", "NL1", "PO1", "BRA1");
             for (String league : leagues) {
                 try {
                     syncLeaguePlayers(league);
-                    // Pause outside transaction to respect API limits
-                    Thread.sleep(10000); 
                 } catch (Exception e) {
                     log.error("Failed to sync league {}: {}", league, e.getMessage());
                 }
