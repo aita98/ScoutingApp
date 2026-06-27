@@ -15,9 +15,14 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.scoutapp.viewmodel.ScoutingViewModel
 import com.scoutapp.data.model.TransfermarktSearchResult
+import coil.compose.AsyncImage
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.ui.draw.clip
 
 @Composable
 fun BackendScreen(
+    onPlayerClick: (String) -> Unit,
     viewModel: ScoutingViewModel = hiltViewModel()
 ) {
     val isLoading by viewModel.isLoading.collectAsState()
@@ -56,31 +61,19 @@ fun BackendScreen(
             ) {
                 Column(modifier = Modifier.padding(16.dp)) {
                     val statusText = when {
-                        isOffline -> "OFFLINE (No Internet)"
-                        !isBackendConnected -> "BACKEND UNREACHABLE"
-                        else -> "ONLINE (Connected)"
+                        isOffline -> "OFFLINE"
+                        !isBackendConnected -> "DISCONNECTED"
+                        else -> "ONLINE"
                     }
                     Text(
-                        text = "Status: $statusText",
+                        text = "Backend Status: $statusText",
                         style = MaterialTheme.typography.titleLarge
-                    )
-                    val descriptionText = when {
-                        isOffline -> "Controlla la tua connessione internet."
-                        !isBackendConnected -> "Il dispositivo è connesso a internet, ma non riesce a raggiungere il backend su ZeroTier (172.24.36.58). Verifica che ZeroTier sia attivo."
-                        else -> "Connesso correttamente al backend ZeroTier."
-                    }
-                    Text(
-                        text = descriptionText,
-                        style = MaterialTheme.typography.bodyMedium
                     )
 
                     backendStatusInfo?.let { info ->
                         Spacer(modifier = Modifier.height(8.dp))
-                        Divider(color = Color.White.copy(alpha = 0.2f))
-                        Spacer(modifier = Modifier.height(8.dp))
-                        Text("Dettagli Real-time:", style = MaterialTheme.typography.labelMedium)
                         Text("Database: ${info["database"]}", style = MaterialTheme.typography.bodySmall)
-                        Text("Giocatori nel DB: ${info["players_in_db"]}", style = MaterialTheme.typography.bodySmall)
+                        Text("Players in DB: ${info["players_in_db"]}", style = MaterialTheme.typography.bodySmall)
                     }
                 }
             }
@@ -89,29 +82,10 @@ fun BackendScreen(
         item {
             Button(
                 onClick = { viewModel.startupBackend() },
-                modifier = Modifier.fillMaxWidth().height(64.dp),
-                enabled = !isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.primary)
-            ) {
-                if (isLoading) {
-                    CircularProgressIndicator(modifier = Modifier.size(24.dp), color = Color.White)
-                } else {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Icon(Icons.Default.PowerSettingsNew, contentDescription = null)
-                        Spacer(Modifier.width(8.dp))
-                        Text("START BACKEND SERVICES")
-                    }
-                }
-            }
-        }
-
-        item {
-            OutlinedButton(
-                onClick = { viewModel.triggerSync() },
                 modifier = Modifier.fillMaxWidth().height(56.dp),
                 enabled = !isLoading
             ) {
-                Text("Sincronizzazione Campionati (Sync)")
+                Text("START BACKEND SERVICES")
             }
         }
 
@@ -122,33 +96,13 @@ fun BackendScreen(
                 enabled = !isLoading,
                 colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
             ) {
-                Text("RESET DATABASE BACKEND")
-            }
-        }
-
-        item {
-            Button(
-                onClick = { viewModel.loadAllData() },
-                modifier = Modifier.fillMaxWidth().height(56.dp),
-                enabled = !isLoading,
-                colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.secondary)
-            ) {
-                Text("Verifica Connessione Backend")
-            }
-        }
-
-        if (error != null) {
-            item {
-                Text(text = error!!, color = MaterialTheme.colorScheme.error, style = MaterialTheme.typography.bodySmall)
+                Text("RESET DATABASE")
             }
         }
 
         item {
             Divider(modifier = Modifier.padding(vertical = 8.dp))
-            Text(
-                text = "Transfermarkt Search (Alternative)",
-                style = MaterialTheme.typography.titleMedium
-            )
+            Text(text = "Transfermarkt Search", style = MaterialTheme.typography.titleMedium)
         }
 
         item {
@@ -156,7 +110,7 @@ fun BackendScreen(
                 value = searchQuery,
                 onValueChange = { searchQuery = it },
                 modifier = Modifier.fillMaxWidth(),
-                placeholder = { Text("Search player on Transfermarkt...") },
+                placeholder = { Text("Search player name...") },
                 trailingIcon = {
                     IconButton(onClick = { viewModel.searchPlayers(searchQuery) }) {
                         Icon(Icons.Default.Search, contentDescription = "Search")
@@ -167,39 +121,36 @@ fun BackendScreen(
         }
 
         items(searchResults) { player ->
-            TransfermarktPlayerItem(player)
-        }
-        
-        item {
-            Spacer(modifier = Modifier.height(32.dp))
-            Text(
-                text = "Target IP: 172.24.36.58:8080\nTM API: transfermarkt-api.fly.dev",
-                style = MaterialTheme.typography.labelSmall,
-                color = Color.Gray,
-                textAlign = androidx.compose.ui.text.style.TextAlign.Center
-            )
+            TransfermarktPlayerItem(player) {
+                onPlayerClick(player.id)
+            }
         }
     }
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun TransfermarktPlayerItem(player: TransfermarktSearchResult) {
+fun TransfermarktPlayerItem(player: TransfermarktSearchResult, onClick: () -> Unit) {
     Card(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(vertical = 4.dp),
+        modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp),
+        onClick = onClick,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceVariant)
     ) {
         Row(
-            modifier = Modifier
-                .padding(12.dp)
-                .fillMaxWidth(),
+            modifier = Modifier.padding(12.dp).fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
+            AsyncImage(
+                model = player.imageUrl,
+                contentDescription = null,
+                modifier = Modifier.size(50.dp).clip(RoundedCornerShape(4.dp)),
+                contentScale = ContentScale.Crop
+            )
+            Spacer(modifier = Modifier.width(12.dp))
             Column(modifier = Modifier.weight(1f)) {
                 Text(text = player.name, style = MaterialTheme.typography.titleMedium)
-                Text(text = "${player.club ?: "N/A"} - ${player.position ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
-                Text(text = "Value: ${player.marketValue ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
+                Text(text = "${player.clubName ?: "N/A"} - ${player.position ?: "N/A"}", style = MaterialTheme.typography.bodySmall)
+                Text(text = "Market Value: ${player.marketValue ?: "N/A"}", style = MaterialTheme.typography.bodySmall, color = MaterialTheme.colorScheme.primary)
             }
         }
     }

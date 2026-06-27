@@ -1,0 +1,110 @@
+[
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\drawable_ic_launcher_foreground.xml.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\drawable\\ic_launcher_foreground.xml"
+    },
+    {
+        "merged": "com.scoutapp-debug-57:/drawable-nodpi_app_logo.png.flat",
+        "source": "com.scoutapp-main-59:/drawable-nodpi/app_logo.png"
+    },
+    {
+        "merged": "com.scoutapp-debug-57:/drawable-xxhdpi_app_logo.png.flat",
+        "source": "com.scoutapp-main-59:/drawable-xxhdpi/app_logo.png"
+    },
+    {
+        "merged": "com.scoutapp-debug-57:/drawable-xhdpi_app_logo.png.flat",
+        "source": "com.scoutapp-main-59:/drawable-xhdpi/app_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\drawable_app_logo.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\drawable\\app_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-hdpi_ic_launcher_round.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-hdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-mdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-mdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\drawable_ic_launcher_background.xml.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\drawable\\ic_launcher_background.xml"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xxxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-anydpi-v26_ic_launcher.xml.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-anydpi-v26\\ic_launcher.xml"
+    },
+    {
+        "merged": "com.scoutapp-debug-57:/drawable-xxxhdpi_app_logo.png.flat",
+        "source": "com.scoutapp-main-59:/drawable-xxxhdpi/app_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-hdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-hdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-mdpi_ic_launcher_round.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-mdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "com.scoutapp-debug-57:/drawable-mdpi_app_logo.png.flat",
+        "source": "com.scoutapp-main-59:/drawable-mdpi/app_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xxxhdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xxxhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "com.scoutapp-debug-57:/drawable-hdpi_app_logo.png.flat",
+        "source": "com.scoutapp-main-59:/drawable-hdpi/app_logo.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-hdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-hdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xhdpi_ic_launcher_round.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xxxhdpi_ic_launcher_round.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xxxhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xxhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-anydpi-v26_ic_launcher_round.xml.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-anydpi-v26\\ic_launcher_round.xml"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xxhdpi_ic_launcher_round.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xxhdpi\\ic_launcher_round.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-mdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-mdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xxhdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xxhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xhdpi\\ic_launcher.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\mipmap-xhdpi_ic_launcher_foreground.png.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\mipmap-xhdpi\\ic_launcher_foreground.png"
+    },
+    {
+        "merged": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-debug-57:\\drawable_app_logo.xml.flat",
+        "source": "C:\\Users\\Enrico\\.gradle\\daemon\\8.13\\com.scoutapp-main-59:\\drawable\\app_logo.xml"
+    }
+]

@@ -3,12 +3,11 @@ package com.scoutapp
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
@@ -22,8 +21,15 @@ import com.scoutapp.ui.screens.*
 import dagger.hilt.android.AndroidEntryPoint
 import androidx.compose.ui.unit.dp
 
+import androidx.compose.ui.res.painterResource
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
+import com.scoutapp.R
+
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
+    @OptIn(ExperimentalMaterial3Api::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
@@ -34,6 +40,7 @@ class MainActivity : ComponentActivity() {
                 val scoutingViewModel: ScoutingViewModel = hiltViewModel()
                 val isOffline by scoutingViewModel.isOffline.collectAsState()
                 val error by scoutingViewModel.error.collectAsState()
+                val syncStatus by scoutingViewModel.syncStatus.collectAsState()
 
                 LaunchedEffect(Unit) {
                     scoutingViewModel.loadAllData()
@@ -50,6 +57,51 @@ class MainActivity : ComponentActivity() {
                     },
                     topBar = {
                         Column {
+                            // App Logo & Title Bar
+                            CenterAlignedTopAppBar(
+                                title = {
+                                    Row(verticalAlignment = androidx.compose.ui.Alignment.CenterVertically) {
+                                        Image(
+                                            painter = painterResource(id = R.drawable.app_logo),
+                                            contentDescription = "App Logo",
+                                            modifier = Modifier
+                                                .size(40.dp)
+                                                .clip(CircleShape)
+                                                .padding(end = 8.dp)
+                                        )
+                                        Text("ScoutApp", style = MaterialTheme.typography.titleLarge)
+                                    }
+                                },
+                                colors = TopAppBarDefaults.centerAlignedTopAppBarColors(
+                                    containerColor = MaterialTheme.colorScheme.surfaceVariant
+                                )
+                            )
+
+                            // Backend Sync Progress Banner
+                            syncStatus?.let { status ->
+                                if (status.syncing) {
+                                    Surface(
+                                        color = MaterialTheme.colorScheme.tertiaryContainer,
+                                        modifier = Modifier.fillMaxWidth()
+                                    ) {
+                                        Column(modifier = Modifier.padding(12.dp)) {
+                                            Text(
+                                                text = status.message,
+                                                style = MaterialTheme.typography.labelMedium,
+                                                fontWeight = androidx.compose.ui.text.font.FontWeight.Bold,
+                                                color = MaterialTheme.colorScheme.onTertiaryContainer
+                                            )
+                                            Spacer(modifier = Modifier.height(4.dp))
+                                            LinearProgressIndicator(
+                                                progress = status.progress / 100f,
+                                                modifier = Modifier.fillMaxWidth(),
+                                                color = MaterialTheme.colorScheme.tertiary
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+
                             if (isOffline) {
                                 Surface(
                                     color = MaterialTheme.colorScheme.errorContainer,
@@ -82,7 +134,7 @@ class MainActivity : ComponentActivity() {
                 ) { innerPadding ->
                     NavHost(
                         navController = navController,
-                        startDestination = Screen.Consigliati.route,
+                        startDestination = Screen.OTW.route,
                         modifier = Modifier.padding(innerPadding)
                     ) {
                         composable(Screen.Monitorati.route) { 
@@ -94,11 +146,11 @@ class MainActivity : ComponentActivity() {
                             }
                         }
                         
-                        composable(Screen.Consigliati.route) { 
-                            val players by scoutingViewModel.recommended.collectAsState()
+                        composable(Screen.OTW.route) { 
+                            val players by scoutingViewModel.otw.collectAsState()
                             val loading by scoutingViewModel.isLoading.collectAsState()
                             val error by scoutingViewModel.error.collectAsState()
-                            PlayerListScreen("Top Prospects", players, loading, error) { id ->
+                            PlayerListScreen("One To Watch", players, loading, error) { id ->
                                 navController.navigate("player_detail/$id")
                             }
                         }
@@ -157,7 +209,9 @@ class MainActivity : ComponentActivity() {
                         }
 
                         composable(Screen.Backend.route) {
-                            BackendScreen(scoutingViewModel)
+                            BackendScreen(onPlayerClick = { id ->
+                                navController.navigate("player_detail/$id")
+                            }, scoutingViewModel)
                         }
                     }
                 }

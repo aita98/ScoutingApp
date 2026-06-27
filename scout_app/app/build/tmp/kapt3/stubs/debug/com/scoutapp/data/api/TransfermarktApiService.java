@@ -1,9 +1,9 @@
 package com.scoutapp.data.api;
 
-@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u00006\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010\b\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0003\n\u0002\u0018\u0002\n\u0002\b\u0002\bf\u0018\u00002\u00020\u0001J$\u0010\u0002\u001a\u00020\u00032\b\b\u0001\u0010\u0004\u001a\u00020\u00052\n\b\u0003\u0010\u0006\u001a\u0004\u0018\u00010\u0007H\u00a7@\u00a2\u0006\u0002\u0010\bJ$\u0010\t\u001a\u00020\n2\b\b\u0001\u0010\u000b\u001a\u00020\u00052\n\b\u0003\u0010\u0006\u001a\u0004\u0018\u00010\u0007H\u00a7@\u00a2\u0006\u0002\u0010\bJ\u0018\u0010\f\u001a\u00020\r2\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u000f\u001a\u00020\r2\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u0010\u001a\u00020\u00112\b\b\u0001\u0010\u0012\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000e\u00a8\u0006\u0013"}, d2 = {"Lcom/scoutapp/data/api/TransfermarktApiService;", "", "getClubPlayers", "Lcom/scoutapp/data/model/TransfermarktClubPlayers;", "id", "", "seasonId", "", "(Ljava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "getCompetitionClubs", "Lcom/scoutapp/data/model/TransfermarktCompetitionClubs;", "competitionId", "getPlayerHeader", "Lcom/scoutapp/data/model/TransfermarktPlayerProfile;", "(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "getPlayerProfile", "searchAll", "Lcom/scoutapp/data/model/TransfermarktSearchResponse;", "query", "app_debug"})
+@kotlin.Metadata(mv = {1, 9, 0}, k = 1, xi = 48, d1 = {"\u0000\\\n\u0002\u0018\u0002\n\u0002\u0010\u0000\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0010\u000e\n\u0000\n\u0002\u0010\b\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0002\b\u0002\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0000\n\u0002\u0018\u0002\n\u0002\b\u0002\bf\u0018\u00002\u00020\u0001J$\u0010\u0002\u001a\u00020\u00032\b\b\u0001\u0010\u0004\u001a\u00020\u00052\n\b\u0003\u0010\u0006\u001a\u0004\u0018\u00010\u0007H\u00a7@\u00a2\u0006\u0002\u0010\bJ$\u0010\t\u001a\u00020\n2\b\b\u0001\u0010\u000b\u001a\u00020\u00052\n\b\u0003\u0010\u0006\u001a\u0004\u0018\u00010\u0007H\u00a7@\u00a2\u0006\u0002\u0010\bJ\u0018\u0010\f\u001a\u00020\r2\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ0\u0010\u000f\u001a\u00020\u00102\b\b\u0001\u0010\u0004\u001a\u00020\u00052\n\b\u0003\u0010\u0006\u001a\u0004\u0018\u00010\u00052\n\b\u0003\u0010\u000b\u001a\u0004\u0018\u00010\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u0011J\u0018\u0010\u0012\u001a\u00020\u00132\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u0014\u001a\u00020\u00152\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u0016\u001a\u00020\u00172\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u0018\u001a\u00020\u00192\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u001a\u001a\u00020\u001b2\b\b\u0001\u0010\u0004\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000eJ\u0018\u0010\u001c\u001a\u00020\u001d2\b\b\u0001\u0010\u001e\u001a\u00020\u0005H\u00a7@\u00a2\u0006\u0002\u0010\u000e\u00a8\u0006\u001f"}, d2 = {"Lcom/scoutapp/data/api/TransfermarktApiService;", "", "getClubPlayers", "Lcom/scoutapp/data/model/TransfermarktClubPlayers;", "id", "", "seasonId", "", "(Ljava/lang/String;Ljava/lang/Integer;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "getCompetitionClubs", "Lcom/scoutapp/data/model/TransfermarktCompetitionClubs;", "competitionId", "getPlayerAchievements", "Lcom/scoutapp/data/model/TransfermarktAchievementsResponse;", "(Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "getPlayerDetailedStats", "Lcom/scoutapp/data/model/TransfermarktDetailedStatsResponse;", "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lkotlin/coroutines/Continuation;)Ljava/lang/Object;", "getPlayerInjuries", "Lcom/scoutapp/data/model/TransfermarktInjuriesResponse;", "getPlayerJerseyNumbers", "Lcom/scoutapp/data/model/TransfermarktJerseyNumbersResponse;", "getPlayerMarketValue", "Lcom/scoutapp/data/model/TransfermarktMarketValueHistoryResponse;", "getPlayerProfile", "Lcom/scoutapp/data/model/TransfermarktPlayerProfile;", "getPlayerTransfers", "Lcom/scoutapp/data/model/TransfermarktTransfersResponse;", "searchAll", "Lcom/scoutapp/data/model/TransfermarktSearchResponse;", "query", "app_debug"})
 public abstract interface TransfermarktApiService {
     
-    @retrofit2.http.GET(value = "players/search/{query}/")
+    @retrofit2.http.GET(value = "players/search/{query}")
     @org.jetbrains.annotations.Nullable()
     public abstract java.lang.Object searchAll(@retrofit2.http.Path(value = "query")
     @org.jetbrains.annotations.NotNull()
@@ -17,12 +17,51 @@ public abstract interface TransfermarktApiService {
     java.lang.String id, @org.jetbrains.annotations.NotNull()
     kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktPlayerProfile> $completion);
     
-    @retrofit2.http.GET(value = "players/{id}/profile")
+    @retrofit2.http.GET(value = "players/{id}/market_value")
     @org.jetbrains.annotations.Nullable()
-    public abstract java.lang.Object getPlayerHeader(@retrofit2.http.Path(value = "id")
+    public abstract java.lang.Object getPlayerMarketValue(@retrofit2.http.Path(value = "id")
     @org.jetbrains.annotations.NotNull()
     java.lang.String id, @org.jetbrains.annotations.NotNull()
-    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktPlayerProfile> $completion);
+    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktMarketValueHistoryResponse> $completion);
+    
+    @retrofit2.http.GET(value = "players/{id}/transfers")
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Object getPlayerTransfers(@retrofit2.http.Path(value = "id")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String id, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktTransfersResponse> $completion);
+    
+    @retrofit2.http.GET(value = "players/{id}/jersey_numbers")
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Object getPlayerJerseyNumbers(@retrofit2.http.Path(value = "id")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String id, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktJerseyNumbersResponse> $completion);
+    
+    @retrofit2.http.GET(value = "players/{id}/stats")
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Object getPlayerDetailedStats(@retrofit2.http.Path(value = "id")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String id, @retrofit2.http.Query(value = "season_id")
+    @org.jetbrains.annotations.Nullable()
+    java.lang.String seasonId, @retrofit2.http.Query(value = "competition_id")
+    @org.jetbrains.annotations.Nullable()
+    java.lang.String competitionId, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktDetailedStatsResponse> $completion);
+    
+    @retrofit2.http.GET(value = "players/{id}/injuries")
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Object getPlayerInjuries(@retrofit2.http.Path(value = "id")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String id, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktInjuriesResponse> $completion);
+    
+    @retrofit2.http.GET(value = "players/{id}/achievements")
+    @org.jetbrains.annotations.Nullable()
+    public abstract java.lang.Object getPlayerAchievements(@retrofit2.http.Path(value = "id")
+    @org.jetbrains.annotations.NotNull()
+    java.lang.String id, @org.jetbrains.annotations.NotNull()
+    kotlin.coroutines.Continuation<? super com.scoutapp.data.model.TransfermarktAchievementsResponse> $completion);
     
     @retrofit2.http.GET(value = "clubs/{id}/players")
     @org.jetbrains.annotations.Nullable()

@@ -31,4 +31,9 @@ object DatabaseModule {
     fun providePlayerDao(database: ScoutDatabase): PlayerDao {
         return database.playerDao()
     }
+
+    @Provides
+    fun provideMatchDao(database: ScoutDatabase): com.scoutapp.data.local.MatchDao {
+        return database.matchDao()
+    }
 }

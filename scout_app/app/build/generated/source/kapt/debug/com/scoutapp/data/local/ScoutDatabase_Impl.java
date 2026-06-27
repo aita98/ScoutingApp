@@ -16,6 +16,7 @@ import java.lang.Override;
 import java.lang.String;
 import java.lang.SuppressWarnings;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -28,20 +29,29 @@ import javax.annotation.processing.Generated;
 public final class ScoutDatabase_Impl extends ScoutDatabase {
   private volatile PlayerDao _playerDao;
 
+  private volatile MatchDao _matchDao;
+
   @Override
   @NonNull
   protected SupportSQLiteOpenHelper createOpenHelper(@NonNull final DatabaseConfiguration config) {
-    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(2) {
+    final SupportSQLiteOpenHelper.Callback _openCallback = new RoomOpenHelper(config, new RoomOpenHelper.Delegate(15) {
       @Override
       public void createAllTables(@NonNull final SupportSQLiteDatabase db) {
-        db.execSQL("CREATE TABLE IF NOT EXISTS `cached_players` (`id` INTEGER NOT NULL, `name` TEXT NOT NULL, `club` TEXT NOT NULL, `age` INTEGER, `marketValue` REAL, `talentScore` REAL NOT NULL, `hiddenGemScore` REAL NOT NULL, `position` TEXT NOT NULL, `isWatchlisted` INTEGER NOT NULL, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `cached_players` (`id` INTEGER NOT NULL, `tmId` TEXT, `fbrefSlug` TEXT, `fbrefId` TEXT, `name` TEXT NOT NULL, `club` TEXT, `age` INTEGER, `marketValue` REAL, `talentScore` REAL NOT NULL, `hiddenGemScore` REAL NOT NULL, `position` TEXT, `photoUrl` TEXT, `isRetired` INTEGER NOT NULL, `isWatchlisted` INTEGER NOT NULL, `season` TEXT, `goals` INTEGER, `assists` INTEGER, `xG` REAL, `minutes` INTEGER, `goalsConceded` INTEGER, `cleanSheets` INTEGER, `foot` TEXT, `shirtNumber` TEXT, `citizenship` TEXT, `contractExpires` TEXT, `birthDate` TEXT, `seasonalStats` TEXT, `detailedStats` TEXT, `achievements` TEXT, `marketValueHistory` TEXT, `transfers` TEXT, `injuries` TEXT, `radarData` TEXT, `recentPerformanceJson` TEXT, `fbrefStatsJson` TEXT, `lastUpdated` INTEGER NOT NULL, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `player_enrichment_cache` (`tmId` TEXT NOT NULL, `backendId` INTEGER NOT NULL, `jsonData` TEXT NOT NULL, `rating` REAL NOT NULL, `lastUpdated` INTEGER NOT NULL, PRIMARY KEY(`tmId`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `matches` (`id` INTEGER NOT NULL, `competitionCode` TEXT NOT NULL, `season` TEXT NOT NULL, `matchDate` INTEGER NOT NULL, `homeClubId` INTEGER NOT NULL, `awayClubId` INTEGER NOT NULL, `homeScore` INTEGER NOT NULL, `awayScore` INTEGER NOT NULL, `venue` TEXT, PRIMARY KEY(`id`))");
+        db.execSQL("CREATE TABLE IF NOT EXISTS `player_match_performance` (`playerId` INTEGER NOT NULL, `matchId` INTEGER NOT NULL, `participationState` TEXT NOT NULL, `minutesPlayed` INTEGER NOT NULL, `goals` INTEGER NOT NULL, `assists` INTEGER NOT NULL, `yellowCard` INTEGER NOT NULL, `shots` INTEGER NOT NULL, `passesCompleted` INTEGER NOT NULL, `passesTotal` INTEGER NOT NULL, `isStarting` INTEGER NOT NULL, PRIMARY KEY(`playerId`, `matchId`), FOREIGN KEY(`matchId`) REFERENCES `matches`(`id`) ON UPDATE NO ACTION ON DELETE CASCADE )");
+        db.execSQL("CREATE INDEX IF NOT EXISTS `index_player_match_performance_matchId` ON `player_match_performance` (`matchId`)");
         db.execSQL("CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)");
-        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '4e2bfb7a37d9d3c7b2397d107c020c1c')");
+        db.execSQL("INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '29cfaf9a06b6a265a7b3855bff8a2211')");
       }
 
       @Override
       public void dropAllTables(@NonNull final SupportSQLiteDatabase db) {
         db.execSQL("DROP TABLE IF EXISTS `cached_players`");
+        db.execSQL("DROP TABLE IF EXISTS `player_enrichment_cache`");
+        db.execSQL("DROP TABLE IF EXISTS `matches`");
+        db.execSQL("DROP TABLE IF EXISTS `player_match_performance`");
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
           for (RoomDatabase.Callback _callback : _callbacks) {
@@ -63,6 +73,7 @@ public final class ScoutDatabase_Impl extends ScoutDatabase {
       @Override
       public void onOpen(@NonNull final SupportSQLiteDatabase db) {
         mDatabase = db;
+        db.execSQL("PRAGMA foreign_keys = ON");
         internalInitInvalidationTracker(db);
         final List<? extends RoomDatabase.Callback> _callbacks = mCallbacks;
         if (_callbacks != null) {
@@ -85,16 +96,43 @@ public final class ScoutDatabase_Impl extends ScoutDatabase {
       @NonNull
       public RoomOpenHelper.ValidationResult onValidateSchema(
           @NonNull final SupportSQLiteDatabase db) {
-        final HashMap<String, TableInfo.Column> _columnsCachedPlayers = new HashMap<String, TableInfo.Column>(9);
+        final HashMap<String, TableInfo.Column> _columnsCachedPlayers = new HashMap<String, TableInfo.Column>(36);
         _columnsCachedPlayers.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("tmId", new TableInfo.Column("tmId", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("fbrefSlug", new TableInfo.Column("fbrefSlug", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("fbrefId", new TableInfo.Column("fbrefId", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsCachedPlayers.put("name", new TableInfo.Column("name", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
-        _columnsCachedPlayers.put("club", new TableInfo.Column("club", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("club", new TableInfo.Column("club", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsCachedPlayers.put("age", new TableInfo.Column("age", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsCachedPlayers.put("marketValue", new TableInfo.Column("marketValue", "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsCachedPlayers.put("talentScore", new TableInfo.Column("talentScore", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsCachedPlayers.put("hiddenGemScore", new TableInfo.Column("hiddenGemScore", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
-        _columnsCachedPlayers.put("position", new TableInfo.Column("position", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("position", new TableInfo.Column("position", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("photoUrl", new TableInfo.Column("photoUrl", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("isRetired", new TableInfo.Column("isRetired", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         _columnsCachedPlayers.put("isWatchlisted", new TableInfo.Column("isWatchlisted", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("season", new TableInfo.Column("season", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("goals", new TableInfo.Column("goals", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("assists", new TableInfo.Column("assists", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("xG", new TableInfo.Column("xG", "REAL", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("minutes", new TableInfo.Column("minutes", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("goalsConceded", new TableInfo.Column("goalsConceded", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("cleanSheets", new TableInfo.Column("cleanSheets", "INTEGER", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("foot", new TableInfo.Column("foot", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("shirtNumber", new TableInfo.Column("shirtNumber", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("citizenship", new TableInfo.Column("citizenship", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("contractExpires", new TableInfo.Column("contractExpires", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("birthDate", new TableInfo.Column("birthDate", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("seasonalStats", new TableInfo.Column("seasonalStats", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("detailedStats", new TableInfo.Column("detailedStats", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("achievements", new TableInfo.Column("achievements", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("marketValueHistory", new TableInfo.Column("marketValueHistory", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("transfers", new TableInfo.Column("transfers", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("injuries", new TableInfo.Column("injuries", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("radarData", new TableInfo.Column("radarData", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("recentPerformanceJson", new TableInfo.Column("recentPerformanceJson", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("fbrefStatsJson", new TableInfo.Column("fbrefStatsJson", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsCachedPlayers.put("lastUpdated", new TableInfo.Column("lastUpdated", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
         final HashSet<TableInfo.ForeignKey> _foreignKeysCachedPlayers = new HashSet<TableInfo.ForeignKey>(0);
         final HashSet<TableInfo.Index> _indicesCachedPlayers = new HashSet<TableInfo.Index>(0);
         final TableInfo _infoCachedPlayers = new TableInfo("cached_players", _columnsCachedPlayers, _foreignKeysCachedPlayers, _indicesCachedPlayers);
@@ -104,9 +142,66 @@ public final class ScoutDatabase_Impl extends ScoutDatabase {
                   + " Expected:\n" + _infoCachedPlayers + "\n"
                   + " Found:\n" + _existingCachedPlayers);
         }
+        final HashMap<String, TableInfo.Column> _columnsPlayerEnrichmentCache = new HashMap<String, TableInfo.Column>(5);
+        _columnsPlayerEnrichmentCache.put("tmId", new TableInfo.Column("tmId", "TEXT", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerEnrichmentCache.put("backendId", new TableInfo.Column("backendId", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerEnrichmentCache.put("jsonData", new TableInfo.Column("jsonData", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerEnrichmentCache.put("rating", new TableInfo.Column("rating", "REAL", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerEnrichmentCache.put("lastUpdated", new TableInfo.Column("lastUpdated", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysPlayerEnrichmentCache = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesPlayerEnrichmentCache = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoPlayerEnrichmentCache = new TableInfo("player_enrichment_cache", _columnsPlayerEnrichmentCache, _foreignKeysPlayerEnrichmentCache, _indicesPlayerEnrichmentCache);
+        final TableInfo _existingPlayerEnrichmentCache = TableInfo.read(db, "player_enrichment_cache");
+        if (!_infoPlayerEnrichmentCache.equals(_existingPlayerEnrichmentCache)) {
+          return new RoomOpenHelper.ValidationResult(false, "player_enrichment_cache(com.scoutapp.data.local.PlayerEnrichmentEntity).\n"
+                  + " Expected:\n" + _infoPlayerEnrichmentCache + "\n"
+                  + " Found:\n" + _existingPlayerEnrichmentCache);
+        }
+        final HashMap<String, TableInfo.Column> _columnsMatches = new HashMap<String, TableInfo.Column>(9);
+        _columnsMatches.put("id", new TableInfo.Column("id", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("competitionCode", new TableInfo.Column("competitionCode", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("season", new TableInfo.Column("season", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("matchDate", new TableInfo.Column("matchDate", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("homeClubId", new TableInfo.Column("homeClubId", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("awayClubId", new TableInfo.Column("awayClubId", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("homeScore", new TableInfo.Column("homeScore", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("awayScore", new TableInfo.Column("awayScore", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsMatches.put("venue", new TableInfo.Column("venue", "TEXT", false, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysMatches = new HashSet<TableInfo.ForeignKey>(0);
+        final HashSet<TableInfo.Index> _indicesMatches = new HashSet<TableInfo.Index>(0);
+        final TableInfo _infoMatches = new TableInfo("matches", _columnsMatches, _foreignKeysMatches, _indicesMatches);
+        final TableInfo _existingMatches = TableInfo.read(db, "matches");
+        if (!_infoMatches.equals(_existingMatches)) {
+          return new RoomOpenHelper.ValidationResult(false, "matches(com.scoutapp.data.local.MatchEntity).\n"
+                  + " Expected:\n" + _infoMatches + "\n"
+                  + " Found:\n" + _existingMatches);
+        }
+        final HashMap<String, TableInfo.Column> _columnsPlayerMatchPerformance = new HashMap<String, TableInfo.Column>(11);
+        _columnsPlayerMatchPerformance.put("playerId", new TableInfo.Column("playerId", "INTEGER", true, 1, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("matchId", new TableInfo.Column("matchId", "INTEGER", true, 2, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("participationState", new TableInfo.Column("participationState", "TEXT", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("minutesPlayed", new TableInfo.Column("minutesPlayed", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("goals", new TableInfo.Column("goals", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("assists", new TableInfo.Column("assists", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("yellowCard", new TableInfo.Column("yellowCard", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("shots", new TableInfo.Column("shots", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("passesCompleted", new TableInfo.Column("passesCompleted", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("passesTotal", new TableInfo.Column("passesTotal", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        _columnsPlayerMatchPerformance.put("isStarting", new TableInfo.Column("isStarting", "INTEGER", true, 0, null, TableInfo.CREATED_FROM_ENTITY));
+        final HashSet<TableInfo.ForeignKey> _foreignKeysPlayerMatchPerformance = new HashSet<TableInfo.ForeignKey>(1);
+        _foreignKeysPlayerMatchPerformance.add(new TableInfo.ForeignKey("matches", "CASCADE", "NO ACTION", Arrays.asList("matchId"), Arrays.asList("id")));
+        final HashSet<TableInfo.Index> _indicesPlayerMatchPerformance = new HashSet<TableInfo.Index>(1);
+        _indicesPlayerMatchPerformance.add(new TableInfo.Index("index_player_match_performance_matchId", false, Arrays.asList("matchId"), Arrays.asList("ASC")));
+        final TableInfo _infoPlayerMatchPerformance = new TableInfo("player_match_performance", _columnsPlayerMatchPerformance, _foreignKeysPlayerMatchPerformance, _indicesPlayerMatchPerformance);
+        final TableInfo _existingPlayerMatchPerformance = TableInfo.read(db, "player_match_performance");
+        if (!_infoPlayerMatchPerformance.equals(_existingPlayerMatchPerformance)) {
+          return new RoomOpenHelper.ValidationResult(false, "player_match_performance(com.scoutapp.data.local.MatchPerformanceEntity).\n"
+                  + " Expected:\n" + _infoPlayerMatchPerformance + "\n"
+                  + " Found:\n" + _existingPlayerMatchPerformance);
+        }
         return new RoomOpenHelper.ValidationResult(true, null);
       }
-    }, "4e2bfb7a37d9d3c7b2397d107c020c1c", "6e1f48ec51e95ea4eb267611ec7e8645");
+    }, "29cfaf9a06b6a265a7b3855bff8a2211", "305b5748988bdd86d44bcb496b9a4de3");
     final SupportSQLiteOpenHelper.Configuration _sqliteConfig = SupportSQLiteOpenHelper.Configuration.builder(config.context).name(config.name).callback(_openCallback).build();
     final SupportSQLiteOpenHelper _helper = config.sqliteOpenHelperFactory.create(_sqliteConfig);
     return _helper;
@@ -117,19 +212,32 @@ public final class ScoutDatabase_Impl extends ScoutDatabase {
   protected InvalidationTracker createInvalidationTracker() {
     final HashMap<String, String> _shadowTablesMap = new HashMap<String, String>(0);
     final HashMap<String, Set<String>> _viewTables = new HashMap<String, Set<String>>(0);
-    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "cached_players");
+    return new InvalidationTracker(this, _shadowTablesMap, _viewTables, "cached_players","player_enrichment_cache","matches","player_match_performance");
   }
 
   @Override
   public void clearAllTables() {
     super.assertNotMainThread();
     final SupportSQLiteDatabase _db = super.getOpenHelper().getWritableDatabase();
+    final boolean _supportsDeferForeignKeys = android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.LOLLIPOP;
     try {
+      if (!_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA foreign_keys = FALSE");
+      }
       super.beginTransaction();
+      if (_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA defer_foreign_keys = TRUE");
+      }
       _db.execSQL("DELETE FROM `cached_players`");
+      _db.execSQL("DELETE FROM `player_enrichment_cache`");
+      _db.execSQL("DELETE FROM `matches`");
+      _db.execSQL("DELETE FROM `player_match_performance`");
       super.setTransactionSuccessful();
     } finally {
       super.endTransaction();
+      if (!_supportsDeferForeignKeys) {
+        _db.execSQL("PRAGMA foreign_keys = TRUE");
+      }
       _db.query("PRAGMA wal_checkpoint(FULL)").close();
       if (!_db.inTransaction()) {
         _db.execSQL("VACUUM");
@@ -142,6 +250,7 @@ public final class ScoutDatabase_Impl extends ScoutDatabase {
   protected Map<Class<?>, List<Class<?>>> getRequiredTypeConverters() {
     final HashMap<Class<?>, List<Class<?>>> _typeConvertersMap = new HashMap<Class<?>, List<Class<?>>>();
     _typeConvertersMap.put(PlayerDao.class, PlayerDao_Impl.getRequiredConverters());
+    _typeConvertersMap.put(MatchDao.class, MatchDao_Impl.getRequiredConverters());
     return _typeConvertersMap;
   }
 
@@ -170,6 +279,20 @@ public final class ScoutDatabase_Impl extends ScoutDatabase {
           _playerDao = new PlayerDao_Impl(this);
         }
         return _playerDao;
+      }
+    }
+  }
+
+  @Override
+  public MatchDao matchDao() {
+    if (_matchDao != null) {
+      return _matchDao;
+    } else {
+      synchronized(this) {
+        if(_matchDao == null) {
+          _matchDao = new MatchDao_Impl(this);
+        }
+        return _matchDao;
       }
     }
   }

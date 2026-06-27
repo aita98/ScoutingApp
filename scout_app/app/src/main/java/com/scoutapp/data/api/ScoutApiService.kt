@@ -2,6 +2,8 @@ package com.scoutapp.data.api
 
 import com.scoutapp.data.model.AIScoutRequest
 import com.scoutapp.data.model.AIScoutResponse
+import com.scoutapp.data.model.SyncStatus
+import com.scoutapp.data.api.fbref.FbrefStatsResponseDto
 import com.google.gson.annotations.SerializedName
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -11,8 +13,8 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 
 interface ScoutApiService {
-    @GET("api/players/recommended")
-    suspend fun getRecommended(): List<PlayerResponse>
+    @GET("api/players/otw")
+    suspend fun getOneToWatch(): List<PlayerResponse>
 
     @GET("api/players/hidden-gems")
     suspend fun getHiddenGems(): List<PlayerResponse>
@@ -21,10 +23,10 @@ interface ScoutApiService {
     suspend fun getScoutFeed(): List<ScoutEventResponse>
 
     @GET("api/players/{id}")
-    suspend fun getPlayerDetail(@Path("id") id: Long): PlayerResponse
+    suspend fun getPlayerDetail(@Path("id") id: String): PlayerResponse
 
     @GET("api/players/{id}/radar")
-    suspend fun getPlayerRadar(@Path("id") id: Long): RadarResponse
+    suspend fun getPlayerRadar(@Path("id") id: String): RadarResponse
 
     @GET("api/leagues")
     suspend fun getLeagues(): List<LeagueResponse>
@@ -73,18 +75,28 @@ interface ScoutApiService {
 
     @GET("api/system/status")
     suspend fun getBackendStatus(): retrofit2.Response<Map<String, Any>>
+
+    @GET("api/sync/status")
+    suspend fun getSyncStatus(): retrofit2.Response<SyncStatus>
+
+    @GET("api/fbref/stats/combined/{tmId}/{fbrefId}/{slug}")
+    suspend fun getHybridStats(
+        @Path("tmId") tmId: String,
+        @Path("fbrefId") fbrefId: String,
+        @Path("slug") slug: String
+    ): FbrefStatsResponseDto
 }
 
 data class LeagueResponse(val id: Long, val name: String, val country: String, val logoUrl: String?)
 data class TeamResponse(val id: Long, val name: String, val city: String, val logoUrl: String?)
 
 data class RadarResponse(
-    val pace: Int,
-    val shooting: Int,
-    val passing: Int,
-    val dribbling: Int,
-    val physical: Int,
-    val intelligence: Int
+    val pace: Int? = null,
+    val shooting: Int? = null,
+    val passing: Int? = null,
+    val dribbling: Int? = null,
+    val physical: Int? = null,
+    val intelligence: Int? = null
 )
 
 data class ComparisonResponse(
@@ -113,31 +125,72 @@ data class WatchlistResponse(
 
 data class PlayerResponse(
     val id: Long,
+    @SerializedName("transfermarktId")
+    val transfermarktId: String? = null,
     @SerializedName("tmId")
     val tmId: String? = null,
-    val name: String?,
-    val club: String?,
+    @SerializedName("fbrefSlug")
+    val fbrefSlug: String? = null,
+    val name: String? = null,
+    val club: String? = null,
+    val league: String? = null,
     val age: Int? = null,
     val marketValue: Double? = null,
-    val talentScore: Double?,
-    val hiddenGemScore: Double?,
-    val position: String?,
-    val photoUrl: String?,
+    val marketValueDisplay: String? = null,
+    val talentScore: Double? = null,
+    val hiddenGemScore: Double? = null,
+    
+    val season: String? = null,
+    val minutes: Int? = null,
+    
+    // Status flags
+    val isConsigliato: Boolean? = false,
+    val isHiddenGem: Boolean? = false,
+    
+    // Advanced Stats
+    val goals: Int? = null,
+    val assists: Int? = null,
+    val xG: Double? = null,
+    val xA: Double? = null,
+    val keyPasses: Int? = null,
+    val progressivePasses: Int? = null,
+    val progressiveCarries: Int? = null,
+
+    // Goalkeeper specific
+    val goalsConceded: Int? = null,
+    val cleanSheets: Int? = null,
+
+    val position: String? = null,
+    val photoUrl: String? = null,
+    val isRetired: Boolean? = false,
     @SerializedName("statistics")
-    val statistics: List<SeasonStats>? = null
+    val statistics: List<SeasonStats>? = null,
+    @SerializedName("recentMatches")
+    val recentMatches: List<RecentMatch>? = null,
+    @SerializedName("radar")
+    val radar: RadarResponse? = null
 ) {
     val seasonStats: SeasonStats?
         get() = statistics?.firstOrNull()
 }
 
+data class RecentMatch(
+    val goals: Int? = null,
+    val assists: Int? = null,
+    val minutes: Int? = null,
+    val isStarting: Boolean? = null
+)
+
 data class SeasonStats(
-    val appearances: Int,
-    val goals: Int,
-    val assists: Int,
-    val yellowCards: Int,
-    val redCards: Int,
+    val appearances: Int? = null,
+    val goals: Int? = null,
+    val assists: Int? = null,
+    val yellowCards: Int? = null,
+    val redCards: Int? = null,
     @SerializedName("minutes")
-    val minutesPlayed: Int
+    val minutesPlayed: Int? = null,
+    val goalsConceded: Int? = null,
+    val cleanSheets: Int? = null
 )
 
 data class ScoutEventResponse(

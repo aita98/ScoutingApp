@@ -21,6 +21,7 @@ import hilt_aggregated_deps._com_scoutapp_MainActivity_GeneratedInjector;
 import hilt_aggregated_deps._com_scoutapp_ScoutApp_GeneratedInjector;
 import hilt_aggregated_deps._com_scoutapp_di_DatabaseModule;
 import hilt_aggregated_deps._com_scoutapp_di_NetworkModule;
+import hilt_aggregated_deps._com_scoutapp_di_RepositoryModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_LeaguesViewModel_HiltModules_BindsModule;
@@ -31,6 +32,8 @@ import hilt_aggregated_deps._com_scoutapp_viewmodel_AIScoutViewModel_HiltModules
 import hilt_aggregated_deps._com_scoutapp_viewmodel_AIScoutViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_scoutapp_viewmodel_PlayerDetailViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_scoutapp_viewmodel_PlayerDetailViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_scoutapp_viewmodel_PlayerStatsViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_scoutapp_viewmodel_PlayerStatsViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_scoutapp_viewmodel_ScoutingViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_scoutapp_viewmodel_ScoutingViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint;
@@ -77,6 +80,7 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_scoutapp_ScoutApp_GeneratedInjector.class,
         _com_scoutapp_di_DatabaseModule.class,
         _com_scoutapp_di_NetworkModule.class,
+        _com_scoutapp_di_RepositoryModule.class,
         _com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltModules_BindsModule.class,
         _com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltModules_KeyModule.class,
         _com_scoutapp_ui_screens_LeaguesViewModel_HiltModules_BindsModule.class,
@@ -87,6 +91,8 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_scoutapp_viewmodel_AIScoutViewModel_HiltModules_KeyModule.class,
         _com_scoutapp_viewmodel_PlayerDetailViewModel_HiltModules_BindsModule.class,
         _com_scoutapp_viewmodel_PlayerDetailViewModel_HiltModules_KeyModule.class,
+        _com_scoutapp_viewmodel_PlayerStatsViewModel_HiltModules_BindsModule.class,
+        _com_scoutapp_viewmodel_PlayerStatsViewModel_HiltModules_KeyModule.class,
         _com_scoutapp_viewmodel_ScoutingViewModel_HiltModules_BindsModule.class,
         _com_scoutapp_viewmodel_ScoutingViewModel_HiltModules_KeyModule.class,
         _dagger_hilt_android_flags_FragmentGetContextFix_FragmentGetContextFixEntryPoint.class,

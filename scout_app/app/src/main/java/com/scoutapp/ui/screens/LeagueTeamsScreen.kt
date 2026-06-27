@@ -38,8 +38,12 @@ class LeagueTeamsViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                val response = tmApiService.getCompetitionClubs(leagueId)
-                _teams.value = response.clubs
+                if (leagueId == "FREE") {
+                    _teams.value = listOf(TransfermarktClub("515", "All Free Agents", null))
+                } else {
+                    val response = tmApiService.getCompetitionClubs(leagueId)
+                    _teams.value = response.clubs
+                }
             } catch (e: Exception) {
                 _error.value = "Failed to load teams: ${e.message}"
             } finally {

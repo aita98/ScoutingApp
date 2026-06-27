@@ -49,7 +49,10 @@ fun PlayerListScreen(
                         club = player.club ?: "N/A",
                         score = (if (isGem) player.hiddenGemScore else player.talentScore) ?: 0.0,
                         isGem = isGem,
-                        onClick = { onPlayerClick(player.tmId ?: player.id.toString()) }
+                        onClick = { 
+                            val navId = if (player.tmId != null && player.tmId != "0" && player.tmId != "") player.tmId else player.id.toString()
+                            onPlayerClick(navId)
+                        }
                     )
                 }
             }

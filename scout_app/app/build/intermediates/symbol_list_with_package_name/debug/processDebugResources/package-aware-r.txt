@@ -49,6 +49,7 @@ color androidx_core_ripple_material_light
 color androidx_core_secondary_text_default_material_light
 color call_notification_answer_color
 color call_notification_decline_color
+color ic_launcher_background
 color notification_action_color_filter
 color notification_icon_bg_color
 color vector_tint_color
@@ -76,6 +77,7 @@ dimen notification_subtext_size
 dimen notification_top_pad
 dimen notification_top_pad_large_text
 drawable abc_vector_test
+drawable app_logo
 drawable ic_call_answer
 drawable ic_call_answer_low
 drawable ic_call_answer_video
@@ -197,6 +199,9 @@ layout notification_template_custom_big
 layout notification_template_icon_group
 layout notification_template_part_chronometer
 layout notification_template_part_time
+mipmap ic_launcher
+mipmap ic_launcher_foreground
+mipmap ic_launcher_round
 string androidx_startup
 string app_name
 string bottom_sheet_collapse_description

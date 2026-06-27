@@ -7,12 +7,13 @@ import com.scoutapp.data.api.TransfermarktApiService
 import com.scoutapp.data.api.PlayerResponse
 import com.scoutapp.data.api.ScoutEventResponse
 import com.scoutapp.data.local.PlayerDao
-import com.scoutapp.data.local.PlayerEntity
 import com.scoutapp.data.mock.MockData
+import com.scoutapp.data.model.SyncStatus
 import com.scoutapp.data.model.TransfermarktSearchResult
+import com.scoutapp.domain.repository.PlayerRepository
 import com.scoutapp.utils.NetworkHelper
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.async
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -21,12 +22,13 @@ import javax.inject.Inject
 class ScoutingViewModel @Inject constructor(
     private val apiService: ScoutApiService,
     private val tmApiService: TransfermarktApiService,
+    private val playerRepository: PlayerRepository,
     private val playerDao: PlayerDao,
     private val networkHelper: NetworkHelper
 ) : ViewModel() {
 
-    private val _recommended = MutableStateFlow<List<PlayerResponse>>(emptyList())
-    val recommended: StateFlow<List<PlayerResponse>> = _recommended
+    private val _otw = MutableStateFlow<List<PlayerResponse>>(emptyList())
+    val otw: StateFlow<List<PlayerResponse>> = _otw
 
     private val _hiddenGems = MutableStateFlow<List<PlayerResponse>>(emptyList())
     val hiddenGems: StateFlow<List<PlayerResponse>> = _hiddenGems
@@ -43,6 +45,7 @@ class ScoutingViewModel @Inject constructor(
                 PlayerResponse(
                     id = entity.id,
                     tmId = entity.tmId,
+                    fbrefSlug = entity.fbrefSlug,
                     name = entity.name,
                     club = entity.club,
                     age = entity.age,
@@ -50,8 +53,8 @@ class ScoutingViewModel @Inject constructor(
                     talentScore = entity.talentScore,
                     hiddenGemScore = entity.hiddenGemScore,
                     position = entity.position,
-                    photoUrl = null,
-                    statistics = null
+                    photoUrl = entity.photoUrl,
+                    isRetired = entity.isRetired
                 )
             }
         }.stateIn(viewModelScope, SharingStarted.Lazily, emptyList())
@@ -71,6 +74,31 @@ class ScoutingViewModel @Inject constructor(
     private val _scoutFeed = MutableStateFlow<List<ScoutEventResponse>>(emptyList())
     val scoutFeed: StateFlow<List<ScoutEventResponse>> = _scoutFeed
 
+    private val _syncStatus = MutableStateFlow<SyncStatus?>(null)
+    val syncStatus: StateFlow<SyncStatus?> = _syncStatus
+
+    init {
+        monitorBackendSync()
+    }
+
+    private fun monitorBackendSync() {
+        viewModelScope.launch {
+            while (true) {
+                try {
+                    if (networkHelper.isNetworkConnected()) {
+                        val response = apiService.getSyncStatus()
+                        if (response.isSuccessful) {
+                            _syncStatus.value = response.body()
+                        }
+                    }
+                } catch (e: Exception) {
+                    // Ignore background sync check errors
+                }
+                delay(3000)
+            }
+        }
+    }
+
     fun loadAllData() {
         viewModelScope.launch {
             _isLoading.value = true
@@ -86,9 +114,6 @@ class ScoutingViewModel @Inject constructor(
             _isOffline.value = false
             
             try {
-                // We always want to fill Recommended and Hidden Gems from Transfermarkt
-                // as requested by the user, while still checking backend status.
-                
                 val statusResponse = runCatching { apiService.getBackendStatus() }
                 val response = statusResponse.getOrNull()
                 
@@ -96,7 +121,16 @@ class ScoutingViewModel @Inject constructor(
                     _isBackendConnected.value = true
                     _backendStatusInfo.value = response.body()
                     
-                    // Try to load feed from backend
+                    val otwResult = runCatching { apiService.getOneToWatch() }
+                    if (otwResult.isSuccess) {
+                        _otw.value = otwResult.getOrThrow()
+                    }
+
+                    val gemsResult = runCatching { apiService.getHiddenGems() }
+                    if (gemsResult.isSuccess) {
+                        _hiddenGems.value = gemsResult.getOrThrow()
+                    }
+
                     val feedResult = runCatching { apiService.getScoutFeed() }
                     if (feedResult.isSuccess) {
                         _scoutFeed.value = feedResult.getOrThrow()
@@ -105,12 +139,11 @@ class ScoutingViewModel @Inject constructor(
                     _isBackendConnected.value = false
                 }
 
-                // Load Recommended and Hidden Gems from TM
-                loadDataFromTransfermarkt()
+                // loadDataFromTransfermarkt() // REMOVED: Now backend-driven
                 
             } catch (e: Exception) {
                 _error.value = "Unexpected Error: ${e.message}"
-                loadDataFromTransfermarkt()
+                // loadDataFromTransfermarkt() // REMOVED: Now backend-driven
             } finally {
                 _isLoading.value = false
             }
@@ -136,11 +169,10 @@ class ScoutingViewModel @Inject constructor(
                             talentScore = 85.0,
                             hiddenGemScore = 0.0,
                             position = tmPlayer.position,
-                            photoUrl = tmPlayer.imageUrl,
-                            statistics = null
+                            photoUrl = tmPlayer.imageUrl
                         )
                     }
-                _recommended.value = filteredPlayers
+                _otw.value = filteredPlayers
             }
 
             val gemsResult = runCatching { tmApiService.searchAll("wonderkid") }
@@ -160,18 +192,12 @@ class ScoutingViewModel @Inject constructor(
                             talentScore = 0.0,
                             hiddenGemScore = 92.0,
                             position = tmPlayer.position,
-                            photoUrl = tmPlayer.imageUrl,
-                            statistics = null
+                            photoUrl = tmPlayer.imageUrl
                         )
                     }
                 _hiddenGems.value = filteredGems
             }
-            
-            if (searchResult.isFailure && gemsResult.isFailure) {
-                _error.value = "TM API Unavailable"
-            }
         } catch (e: Exception) {
-            // Silently handle outer exception to prevent crash
             println("loadDataFromTransfermarkt error: ${e.message}")
         }
     }
@@ -181,7 +207,8 @@ class ScoutingViewModel @Inject constructor(
             _isLoading.value = true
             val result = runCatching { tmApiService.searchAll(query) }
             result.onSuccess { response ->
-                _searchResults.value = response.players?.results ?: emptyList()
+                val players = response.results ?: response.players?.results ?: emptyList()
+                _searchResults.value = players
             }.onFailure { e ->
                 _error.value = "Search error: ${e.message}"
             }
@@ -206,7 +233,7 @@ class ScoutingViewModel @Inject constructor(
     }
 
     private fun loadMockData() {
-        _recommended.value = MockData.players.take(5)
+        _otw.value = MockData.players.take(5)
         _hiddenGems.value = MockData.players.drop(5).take(5)
         _scoutFeed.value = MockData.events
     }

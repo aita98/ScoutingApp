@@ -1,5 +1,6 @@
 package com.scoutapp.ui.screens;
 
+import com.scoutapp.data.api.ScoutApiService;
 import com.scoutapp.data.api.TransfermarktApiService;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -25,21 +26,27 @@ import javax.inject.Provider;
 public final class TeamDetailViewModel_Factory implements Factory<TeamDetailViewModel> {
   private final Provider<TransfermarktApiService> tmApiServiceProvider;
 
-  public TeamDetailViewModel_Factory(Provider<TransfermarktApiService> tmApiServiceProvider) {
+  private final Provider<ScoutApiService> scoutApiServiceProvider;
+
+  public TeamDetailViewModel_Factory(Provider<TransfermarktApiService> tmApiServiceProvider,
+      Provider<ScoutApiService> scoutApiServiceProvider) {
     this.tmApiServiceProvider = tmApiServiceProvider;
+    this.scoutApiServiceProvider = scoutApiServiceProvider;
   }
 
   @Override
   public TeamDetailViewModel get() {
-    return newInstance(tmApiServiceProvider.get());
+    return newInstance(tmApiServiceProvider.get(), scoutApiServiceProvider.get());
   }
 
   public static TeamDetailViewModel_Factory create(
-      Provider<TransfermarktApiService> tmApiServiceProvider) {
-    return new TeamDetailViewModel_Factory(tmApiServiceProvider);
+      Provider<TransfermarktApiService> tmApiServiceProvider,
+      Provider<ScoutApiService> scoutApiServiceProvider) {
+    return new TeamDetailViewModel_Factory(tmApiServiceProvider, scoutApiServiceProvider);
   }
 
-  public static TeamDetailViewModel newInstance(TransfermarktApiService tmApiService) {
-    return new TeamDetailViewModel(tmApiService);
+  public static TeamDetailViewModel newInstance(TransfermarktApiService tmApiService,
+      ScoutApiService scoutApiService) {
+    return new TeamDetailViewModel(tmApiService, scoutApiService);
   }
 }

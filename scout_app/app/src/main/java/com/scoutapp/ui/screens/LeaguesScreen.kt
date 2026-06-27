@@ -9,7 +9,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import com.scoutapp.data.api.LeagueResponse
 import com.scoutapp.data.api.ScoutApiService
 import com.scoutapp.data.api.TransfermarktApiService
 import com.scoutapp.data.model.TransfermarktCompetition
@@ -35,9 +34,6 @@ class LeaguesViewModel @Inject constructor(
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
-    // Top Leagues IDs for Transfermarkt
-    private val topLeagueIds = listOf("IT1", "GB1", "ES1", "L1", "FR1", "NL1", "PO1")
-
     init {
         loadLeagues()
     }
@@ -47,23 +43,18 @@ class LeaguesViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                // Fetch basic info for top leagues
-                val leaguesList = mutableListOf<TransfermarktCompetition>()
-                
-                // For now, since there's no direct "get top leagues" endpoint that returns all at once easily,
-                // we search for them or provide a curated list. 
-                // A better approach is to search for common ones.
-                
-                // We'll search for 'Premier League' to start, but ideally we'd have a curated list
-                // For simplicity and speed in this redesign, we'll hardcode the names and fetch details if needed,
-                // or just use a fixed list of common ones since we know their IDs.
-                
-                leaguesList.add(TransfermarktCompetition("IT1", "Serie A", "Italy", null))
-                leaguesList.add(TransfermarktCompetition("GB1", "Premier League", "England", null))
-                leaguesList.add(TransfermarktCompetition("ES1", "LaLiga", "Spain", null))
-                leaguesList.add(TransfermarktCompetition("L1", "Bundesliga", "Germany", null))
-                leaguesList.add(TransfermarktCompetition("FR1", "Ligue 1", "France", null))
-                
+                // Reverted to Transfermarkt IDs for consistency with backend sync
+                val leaguesList = listOf(
+                    TransfermarktCompetition("IT1", "Serie A", "Italy", null),
+                    TransfermarktCompetition("GB1", "Premier League", "England", null),
+                    TransfermarktCompetition("ES1", "LaLiga", "Spain", null),
+                    TransfermarktCompetition("L1", "Bundesliga", "Germany", null),
+                    TransfermarktCompetition("FR1", "Ligue 1", "France", null),
+                    TransfermarktCompetition("NL1", "Eredivisie", "Netherlands", null),
+                    TransfermarktCompetition("PO1", "Liga Portugal", "Portugal", null),
+                    TransfermarktCompetition("BRA1", "Série A", "Brazil", null),
+                    TransfermarktCompetition("FREE", "Free Agents", "Global", null)
+                )
                 _leagues.value = leaguesList
             } catch (e: Exception) {
                 _error.value = "Failed to load leagues: ${e.message}"
@@ -99,7 +90,7 @@ fun LeaguesScreen(
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
         Text(
-            text = "Leagues",
+            text = "Leagues (Transfermarkt)",
             style = MaterialTheme.typography.headlineMedium,
             fontWeight = FontWeight.Bold,
             color = MaterialTheme.colorScheme.primary

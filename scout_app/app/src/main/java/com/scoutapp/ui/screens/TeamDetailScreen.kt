@@ -22,7 +22,8 @@ import javax.inject.Inject
 
 @HiltViewModel
 class TeamDetailViewModel @Inject constructor(
-    private val tmApiService: TransfermarktApiService
+    private val tmApiService: TransfermarktApiService,
+    private val scoutApiService: ScoutApiService
 ) : ViewModel() {
     private val _players = MutableStateFlow<List<PlayerResponse>>(emptyList())
     val players: StateFlow<List<PlayerResponse>> = _players
@@ -38,23 +39,38 @@ class TeamDetailViewModel @Inject constructor(
             _isLoading.value = true
             _error.value = null
             try {
-                val response = tmApiService.getClubPlayers(teamId)
-                val mappedPlayers = response.players.map { tmPlayer ->
-                    PlayerResponse(
-                        id = 0L, // Backend ID unknown for TM-only players
-                        tmId = tmPlayer.id,
-                        name = tmPlayer.name,
-                        club = response.name,
-                        age = tmPlayer.age,
-                        marketValue = parseMarketValueToDouble(tmPlayer.marketValue),
-                        talentScore = null,
-                        hiddenGemScore = null,
-                        position = tmPlayer.position,
-                        photoUrl = tmPlayer.imageUrl,
-                        statistics = null
-                    )
+                if (teamId == "FREE") {
+                    val backendPlayers = try { 
+                        scoutApiService.getOneToWatch() + scoutApiService.getHiddenGems()
+                    } catch (e: Exception) {
+                        emptyList()
+                    }
+                    _players.value = backendPlayers.distinctBy { it.tmId ?: it.id.toString() }
+                } else {
+                    // Reverted to Transfermarkt for squad listing
+                    val response = tmApiService.getClubPlayers(teamId)
+                    val mappedPlayers = response.players?.map { p ->
+                        PlayerResponse(
+                            id = 0L,
+                            transfermarktId = p.id,
+                            tmId = p.id,
+                            fbrefSlug = null,
+                            name = p.name,
+                            club = null, // Team context already known
+                            age = p.age,
+                            marketValue = parseMarketValue(p.marketValue),
+                            marketValueDisplay = p.marketValue,
+                            talentScore = null,
+                            hiddenGemScore = null,
+                            position = p.position,
+                            photoUrl = p.imageUrl,
+                            isRetired = false,
+                            statistics = null,
+                            radar = null
+                        )
+                    } ?: emptyList()
+                    _players.value = mappedPlayers
                 }
-                _players.value = mappedPlayers
             } catch (e: Exception) {
                 _error.value = "Failed to load players: ${e.message}"
             } finally {
@@ -63,7 +79,7 @@ class TeamDetailViewModel @Inject constructor(
         }
     }
 
-    private fun parseMarketValueToDouble(valueStr: String?): Double {
+    private fun parseMarketValue(valueStr: String?): Double {
         if (valueStr == null || valueStr.isEmpty() || valueStr == "N/A") return 0.0
         val cleanStr = valueStr.replace("€", "").trim().lowercase()
         return try {
@@ -95,7 +111,7 @@ fun TeamDetailScreen(
     }
 
     Column(modifier = Modifier.fillMaxSize().padding(16.dp)) {
-        Text(text = "Squad Members", style = MaterialTheme.typography.headlineMedium)
+        Text(text = "Squad Members (TM)", style = MaterialTheme.typography.headlineMedium)
         Spacer(modifier = Modifier.height(16.dp))
 
         if (loading) {
@@ -116,9 +132,11 @@ fun TeamDetailScreen(
                 items(players) { player ->
                     PlayerCard(
                         name = player.name ?: "N/A",
-                        club = player.club ?: "N/A",
+                        club = player.club ?: "",
                         score = player.talentScore ?: 0.0,
-                        onClick = { onPlayerClick(player.tmId ?: player.id.toString()) }
+                        onClick = { 
+                            onPlayerClick(player.tmId ?: player.id.toString())
+                        }
                     )
                 }
             }
