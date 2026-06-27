@@ -73,10 +73,10 @@ public class DataSyncService {
     public void syncLeaguePlayers(String competitionCode) {
         log.info("Starting Transfermarkt sync for competition {}", competitionCode);
         
-        List<TransfermarktCompetitionClubsDto.ClubDto> clubs = transfermarktClient.getClubs(competitionCode, "2024");
+        List<TransfermarktCompetitionClubsDto.ClubDto> clubs = transfermarktClient.getClubs(competitionCode, "2025");
         for (TransfermarktCompetitionClubsDto.ClubDto club : clubs) {
             log.info("Syncing club: {} ({})", club.getName(), club.getId());
-            List<TransfermarktPlayerDto> players = transfermarktClient.getClubPlayers(club.getId(), "2024");
+            List<TransfermarktPlayerDto> players = transfermarktClient.getClubPlayers(club.getId(), "2025");
             
             for (TransfermarktPlayerDto tmPlayer : players) {
                 try {
