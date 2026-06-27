@@ -103,6 +103,15 @@ public class PlayerController {
         return mapToDto(player);
     }
 
+    @GetMapping("/db")
+    @Transactional(readOnly = true)
+    public List<PlayerResponseDto> getAllFromDb(@RequestParam(required = false, defaultValue = "") String query) {
+        if (query.isEmpty()) {
+            return playerRepository.findAll().stream().map(this::mapToDto).collect(java.util.stream.Collectors.toList());
+        }
+        return playerRepository.searchPlayers(query).stream().map(this::mapToDto).collect(java.util.stream.Collectors.toList());
+    }
+
     @GetMapping("/search")
     @Transactional
     public List<PlayerResponseDto> search(@RequestParam String query) {

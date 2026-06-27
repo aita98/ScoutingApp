@@ -67,8 +67,11 @@ interface ScoutApiService {
     @POST("api/ai/scout")
     suspend fun performAIScout(@Body request: AIScoutRequest): AIScoutResponse
 
+    @GET("api/players/db")
+    suspend fun getPlayersFromDb(@Query("query") query: String = ""): List<PlayerResponse>
+
     @POST("api/system/startup")
-    suspend fun startupBackend(): retrofit2.Response<Map<String, String>>
+    suspend fun startupBackend(@Query("season") season: String? = null): retrofit2.Response<Map<String, String>>
 
     @POST("api/system/reset-data")
     suspend fun resetBackendData(): retrofit2.Response<Map<String, String>>

@@ -70,17 +70,49 @@ public class DataSyncService {
         this.self = self;
     }
 
-    public void syncLeaguePlayers(String competitionCode) {
-        log.info("Starting Transfermarkt sync for competition {}", competitionCode);
+    @Async
+    public void syncAllLeagues(String season) {
+        synchronized (this) {
+            if (isSyncing) {
+                log.warn("Sync already in progress, skipping...");
+                return;
+            }
+            isSyncing = true;
+        }
         
-        List<TransfermarktCompetitionClubsDto.ClubDto> clubs = transfermarktClient.getClubs(competitionCode, "2025");
+        try {
+            log.info("Starting global sync for season: {}", season);
+            // Updated to match the "Leagues" tab in the app
+            List<String> leagues = List.of("IT1", "GB1", "ES1", "L1", "FR1", "NL1", "PO1", "BRA1");
+            for (String league : leagues) {
+                try {
+                    syncLeaguePlayers(league, season);
+                } catch (Exception e) {
+                    log.error("Failed to sync league {}: {}", league, e.getMessage());
+                }
+            }
+        } finally {
+            synchronized (this) {
+                isSyncing = false;
+            }
+        }
+    }
+
+    public void syncLeaguePlayers(String competitionCode) {
+        self.syncLeaguePlayers(competitionCode, "2025");
+    }
+
+    public void syncLeaguePlayers(String competitionCode, String season) {
+        log.info("Starting Transfermarkt sync for competition {} season {}", competitionCode, season);
+        
+        List<TransfermarktCompetitionClubsDto.ClubDto> clubs = transfermarktClient.getClubs(competitionCode, season);
         for (TransfermarktCompetitionClubsDto.ClubDto club : clubs) {
             log.info("Syncing club: {} ({})", club.getName(), club.getId());
-            List<TransfermarktPlayerDto> players = transfermarktClient.getClubPlayers(club.getId(), "2025");
+            List<TransfermarktPlayerDto> players = transfermarktClient.getClubPlayers(club.getId(), season);
             
             for (TransfermarktPlayerDto tmPlayer : players) {
                 try {
-                    self.processTransfermarktPlayerData(tmPlayer, club.getName(), competitionCode);
+                    self.processTransfermarktPlayerData(tmPlayer, club.getName(), competitionCode, season);
                 } catch (Exception e) {
                     log.error("Error processing player {}: {}", tmPlayer.getName(), e.getMessage());
                 }
@@ -98,7 +130,7 @@ public class DataSyncService {
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void processTransfermarktPlayerData(TransfermarktPlayerDto tmPlayer, String clubName, String leagueCode) {
+    public void processTransfermarktPlayerData(TransfermarktPlayerDto tmPlayer, String clubName, String leagueCode, String season) {
         Player player = playerRepository.findByTransfermarktId(tmPlayer.getId())
                 .orElse(Player.builder()
                         .transfermarktId(tmPlayer.getId())
@@ -119,7 +151,9 @@ public class DataSyncService {
 
         // Aggiorna le statistiche e calcola gli score
         try {
-            transfermarktSyncService.syncAndAggregateStats(player.getId(), player.getTransfermarktId(), "24/25");
+            // Convert season string to aggregate format if needed (e.g., "2025" -> "25/26")
+            String targetSeason = season.substring(2) + "/" + (Integer.parseInt(season.substring(2)) + 1);
+            transfermarktSyncService.syncAndAggregateStats(player.getId(), player.getTransfermarktId(), targetSeason);
         } catch (Exception e) {
             log.error("Failed to sync stats for player {}: {}", player.getName(), e.getMessage());
         }
@@ -127,29 +161,7 @@ public class DataSyncService {
 
     @Async
     public void syncAllLeagues() {
-        synchronized (this) {
-            if (isSyncing) {
-                log.warn("Sync already in progress, skipping...");
-                return;
-            }
-            isSyncing = true;
-        }
-        
-        try {
-            // Updated to match the "Leagues" tab in the app
-            List<String> leagues = List.of("IT1", "GB1", "ES1", "L1", "FR1", "NL1", "PO1", "BRA1");
-            for (String league : leagues) {
-                try {
-                    syncLeaguePlayers(league);
-                } catch (Exception e) {
-                    log.error("Failed to sync league {}: {}", league, e.getMessage());
-                }
-            }
-        } finally {
-            synchronized (this) {
-                isSyncing = false;
-            }
-        }
+        self.syncAllLeagues("2025");
     }
 
     public void syncAllPlayersWithTM() {

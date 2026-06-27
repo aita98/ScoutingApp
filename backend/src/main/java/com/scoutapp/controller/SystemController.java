@@ -23,10 +23,10 @@ public class SystemController {
     private final ScoutEventRepository scoutEventRepository;
 
     @PostMapping("/startup")
-    public ResponseEntity<Map<String, String>> startup() {
+    public ResponseEntity<Map<String, String>> startup(@RequestParam(required = false, defaultValue = "2025") String season) {
         // Avvia la sincronizzazione globale in background
-        dataSyncService.syncAllLeagues();
-        return ResponseEntity.ok(Map.of("message", "Backend Sync Started in background..."));
+        dataSyncService.syncAllLeagues(season);
+        return ResponseEntity.ok(Map.of("message", "Backend Sync Started in background for season " + season + "..."));
     }
 
     @PostMapping("/reset-data")
