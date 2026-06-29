@@ -17,5 +17,8 @@ data class SimilarPlayer(
     val name: String,
     val club: String,
     val similarityScore: Int,
-    val photoUrl: String? = null
+    val photoUrl: String? = null,
+    val age: Int? = null,
+    val isHiddenGem: Boolean? = false,
+    val isConsigliato: Boolean? = false
 )

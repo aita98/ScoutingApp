@@ -136,6 +136,10 @@ fun AIScoutScreen(
                             name = player.name,
                             club = player.club,
                             score = player.similarityScore.toDouble(),
+                            age = player.age,
+                            photoUrl = player.photoUrl,
+                            isGem = player.isHiddenGem == true,
+                            isTalent = player.isConsigliato == true,
                             onClick = { onPlayerClick(player.id.toString()) }
                         )
                     }

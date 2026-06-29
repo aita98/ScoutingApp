@@ -8,7 +8,7 @@ import javax.inject.Singleton
 class GroqService @Inject constructor(
     private val groqApiService: GroqApiService
 ) {
-    private val apiKey = "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"
+    private val apiKey = ""
     private val model = "llama-3.3-70b-versatile"
 
     private val systemPrompt = """

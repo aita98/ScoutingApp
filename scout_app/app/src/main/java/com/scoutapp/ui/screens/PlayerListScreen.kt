@@ -53,6 +53,7 @@ fun PlayerListScreen(
                         marketValue = player.marketValueDisplay ?: formatMarketValue(player.marketValue),
                         photoUrl = player.photoUrl,
                         isGem = isGem,
+                        isTalent = !isGem && player.talentScore != null && player.talentScore!! > 0,
                         onClick = { 
                             val navId = if (player.tmId != null && player.tmId != "0" && player.tmId != "") player.tmId else player.id.toString()
                             onPlayerClick(navId)

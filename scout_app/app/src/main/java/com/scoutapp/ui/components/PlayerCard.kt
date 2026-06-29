@@ -24,6 +24,7 @@ fun PlayerCard(
     marketValue: String? = null,
     photoUrl: String? = null,
     isGem: Boolean = false,
+    isTalent: Boolean = false,
     onClick: () -> Unit
 ) {
     Card(
@@ -87,9 +88,15 @@ fun PlayerCard(
             }
             
             Box(contentAlignment = Alignment.Center) {
+                val indicatorColor = when {
+                    isGem -> GemCyan
+                    isTalent -> TalentGold
+                    else -> androidx.compose.ui.graphics.Color.Gray
+                }
+                
                 CircularProgressIndicator(
                     progress = (score / 100).toFloat(),
-                    color = if (isGem) GemCyan else TalentGold,
+                    color = indicatorColor,
                     strokeWidth = 4.dp,
                     modifier = Modifier.size(48.dp)
                 )

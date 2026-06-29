@@ -22,6 +22,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import com.scoutapp.ui.components.PlayerCard
 
 // --- DATA MODELS ---
 
@@ -34,6 +35,9 @@ data class Player(
     val league: String,
     val marketValue: String,
     val transfermarktId: String,
+    val photoUrl: String? = null,
+    val talentScore: Double? = 0.0,
+    val hiddenGemScore: Double? = 0.0,
     val stats: PlayerStats? = null
 )
 
@@ -84,6 +88,9 @@ class PlayerListViewModel @Inject constructor(
                         league = p.league ?: "N/A",
                         marketValue = p.marketValueDisplay ?: "N/A",
                         transfermarktId = p.transfermarktId ?: "",
+                        photoUrl = p.photoUrl,
+                        talentScore = p.talentScore,
+                        hiddenGemScore = p.hiddenGemScore,
                         stats = p.statistics?.firstOrNull()?.let { s ->
                             PlayerStats(
                                 appearances = s.appearances ?: 0,
@@ -196,7 +203,17 @@ fun SavedPlayersScreen(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     items(players) { player ->
-                        SavedPlayerCard(player)
+                        PlayerCard(
+                            name = player.name,
+                            club = player.club,
+                            score = (player.talentScore ?: player.hiddenGemScore) ?: 0.0,
+                            age = player.age,
+                            marketValue = player.marketValue,
+                            photoUrl = player.photoUrl,
+                            isGem = (player.hiddenGemScore ?: 0.0) > 0,
+                            isTalent = (player.talentScore ?: 0.0) > 0,
+                            onClick = { /* Handle click if needed, or link to detail */ }
+                        )
                     }
                 }
             }

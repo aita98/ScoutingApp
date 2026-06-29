@@ -94,18 +94,22 @@ class ScoutingViewModel @Inject constructor(
             delay(5000)
             
             playerDao.getAllPlayers().firstOrNull()?.let { allPlayers ->
+                // Sort to prioritize Gems and Talents first, then most recently updated
                 val missingDataPlayers = allPlayers.filter { it.age == null || it.photoUrl == null }
+                    .sortedWith(compareByDescending<com.scoutapp.data.local.PlayerEntity> { it.talentScore > 0 || it.hiddenGemScore > 0 }
+                        .thenByDescending { it.lastUpdated })
+                
                 if (missingDataPlayers.isNotEmpty()) {
-                    android.util.Log.d("SCOUT_VM", "Found ${missingDataPlayers.size} players missing age/photo. Starting enrichment...")
+                    android.util.Log.d("SCOUT_VM", "Found ${missingDataPlayers.size} players missing age/photo. Starting priority enrichment...")
                     
                     // Limit to a reasonable number to avoid hitting API rate limits too hard
-                    missingDataPlayers.take(15).forEach { player ->
+                    missingDataPlayers.take(20).forEach { player ->
                         val tmId = player.tmId
                         if (tmId != null) {
                             try {
                                 android.util.Log.d("SCOUT_VM", "Auto-enriching ${player.name} ($tmId)")
                                 enrichmentRepository.getFullPlayerData(player.id, tmId)
-                                delay(1000) // Small delay between requests
+                                delay(2000) // Slightly longer delay between requests to be safe
                             } catch (e: Exception) {
                                 android.util.Log.e("SCOUT_VM", "Failed to enrich ${player.name}: ${e.message}")
                             }

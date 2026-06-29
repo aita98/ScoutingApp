@@ -219,7 +219,11 @@ fun TeamDetailScreen(
                         name = player.name ?: "N/A",
                         club = player.club ?: "",
                         score = (player.talentScore ?: player.hiddenGemScore) ?: 0.0,
+                        age = player.age,
+                        marketValue = player.marketValueDisplay ?: "",
+                        photoUrl = player.photoUrl,
                         isGem = player.isHiddenGem == true,
+                        isTalent = player.isConsigliato == true,
                         onClick = { 
                             onPlayerClick(player.tmId ?: player.id.toString())
                         }
