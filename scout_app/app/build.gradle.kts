@@ -69,4 +69,7 @@ dependencies {
 
     // Coil
     implementation("io.coil-kt:coil-compose:2.5.0")
+
+    // Gemini AI
+    implementation("com.google.ai.client.generativeai:generativeai:0.7.0")
 }

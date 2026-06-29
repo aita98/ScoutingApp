@@ -25,18 +25,49 @@ fun AIScoutScreen(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val uiState by viewModel.uiState.collectAsState()
+    val isBackendConnected by viewModel.isBackendConnected.collectAsState()
 
     Column(
         modifier = Modifier
             .fillMaxSize()
             .padding(16.dp)
     ) {
-        Text(
-            text = "AI Scouting Assistant",
-            style = MaterialTheme.typography.headlineMedium,
-            fontWeight = FontWeight.Bold,
-            color = MaterialTheme.colorScheme.primary
-        )
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "AI Scouting Assistant",
+                style = MaterialTheme.typography.headlineMedium,
+                fontWeight = FontWeight.Bold,
+                color = MaterialTheme.colorScheme.primary
+            )
+
+            // Connection Status Chip
+            Surface(
+                color = if (isBackendConnected) Color(0xFFE8F5E9) else Color(0xFFFFEBEE),
+                shape = RoundedCornerShape(16.dp),
+                onClick = { viewModel.checkBackendStatus() }
+            ) {
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Box(
+                        modifier = Modifier
+                            .size(8.dp)
+                            .background(if (isBackendConnected) Color.Green else Color.Red, androidx.compose.foundation.shape.CircleShape)
+                    )
+                    Spacer(modifier = Modifier.width(6.dp))
+                    Text(
+                        text = if (isBackendConnected) "Backend Online" else "Backend Offline",
+                        style = MaterialTheme.typography.labelSmall,
+                        color = if (isBackendConnected) Color(0xFF2E7D32) else Color(0xFFC62828)
+                    )
+                }
+            }
+        }
         
         Spacer(modifier = Modifier.height(16.dp))
 
@@ -72,12 +103,33 @@ fun AIScoutScreen(
                     item {
                         AIScoutResultCard(state.data.scoutingReport, state.data.recommendations)
                         Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "Similar Players",
-                            style = MaterialTheme.typography.titleLarge,
-                            fontWeight = FontWeight.Bold
-                        )
+                        
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Text(
+                                text = "Similar Players",
+                                style = MaterialTheme.typography.titleLarge,
+                                fontWeight = FontWeight.Bold
+                            )
+                            if (!isBackendConnected) {
+                                Spacer(modifier = Modifier.width(8.dp))
+                                Text(
+                                    "(Backend Unavailable)",
+                                    style = MaterialTheme.typography.labelSmall,
+                                    color = MaterialTheme.colorScheme.error
+                                )
+                            }
+                        }
                         Spacer(modifier = Modifier.height(8.dp))
+                    }
+                    if (state.data.similarPlayers.isEmpty() && !isBackendConnected) {
+                        item {
+                            Text(
+                                "Cannot retrieve similar players while backend is offline.",
+                                style = MaterialTheme.typography.bodySmall,
+                                color = Color.Gray,
+                                modifier = Modifier.padding(vertical = 8.dp)
+                            )
+                        }
                     }
                     items(state.data.similarPlayers) { player ->
                         PlayerCard(
@@ -90,7 +142,32 @@ fun AIScoutScreen(
                 }
             }
             is AIScoutUiState.Error -> {
-                Text(text = "Error: ${state.message}", color = MaterialTheme.colorScheme.error)
+                Card(
+                    modifier = Modifier.fillMaxWidth(),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.errorContainer)
+                ) {
+                    Column(modifier = Modifier.padding(16.dp)) {
+                        Text(
+                            text = "Analysis Error",
+                            style = MaterialTheme.typography.titleMedium,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Spacer(modifier = Modifier.height(4.dp))
+                        Text(
+                            text = state.message,
+                            style = MaterialTheme.typography.bodyMedium,
+                            color = MaterialTheme.colorScheme.onErrorContainer
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+                        Button(
+                            onClick = { viewModel.performAIScout(searchQuery) },
+                            colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                        ) {
+                            Text("Retry Analysis")
+                        }
+                    }
+                }
             }
             else -> {
                 Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {

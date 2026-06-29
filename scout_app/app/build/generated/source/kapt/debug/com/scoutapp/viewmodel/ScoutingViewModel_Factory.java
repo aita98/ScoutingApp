@@ -3,6 +3,7 @@ package com.scoutapp.viewmodel;
 import com.scoutapp.data.api.ScoutApiService;
 import com.scoutapp.data.api.TransfermarktApiService;
 import com.scoutapp.data.local.PlayerDao;
+import com.scoutapp.data.repository.EnrichmentRepository;
 import com.scoutapp.domain.repository.PlayerRepository;
 import com.scoutapp.utils.NetworkHelper;
 import dagger.internal.DaggerGenerated;
@@ -35,34 +36,39 @@ public final class ScoutingViewModel_Factory implements Factory<ScoutingViewMode
 
   private final Provider<PlayerDao> playerDaoProvider;
 
+  private final Provider<EnrichmentRepository> enrichmentRepositoryProvider;
+
   private final Provider<NetworkHelper> networkHelperProvider;
 
   public ScoutingViewModel_Factory(Provider<ScoutApiService> apiServiceProvider,
       Provider<TransfermarktApiService> tmApiServiceProvider,
       Provider<PlayerRepository> playerRepositoryProvider, Provider<PlayerDao> playerDaoProvider,
+      Provider<EnrichmentRepository> enrichmentRepositoryProvider,
       Provider<NetworkHelper> networkHelperProvider) {
     this.apiServiceProvider = apiServiceProvider;
     this.tmApiServiceProvider = tmApiServiceProvider;
     this.playerRepositoryProvider = playerRepositoryProvider;
     this.playerDaoProvider = playerDaoProvider;
+    this.enrichmentRepositoryProvider = enrichmentRepositoryProvider;
     this.networkHelperProvider = networkHelperProvider;
   }
 
   @Override
   public ScoutingViewModel get() {
-    return newInstance(apiServiceProvider.get(), tmApiServiceProvider.get(), playerRepositoryProvider.get(), playerDaoProvider.get(), networkHelperProvider.get());
+    return newInstance(apiServiceProvider.get(), tmApiServiceProvider.get(), playerRepositoryProvider.get(), playerDaoProvider.get(), enrichmentRepositoryProvider.get(), networkHelperProvider.get());
   }
 
   public static ScoutingViewModel_Factory create(Provider<ScoutApiService> apiServiceProvider,
       Provider<TransfermarktApiService> tmApiServiceProvider,
       Provider<PlayerRepository> playerRepositoryProvider, Provider<PlayerDao> playerDaoProvider,
+      Provider<EnrichmentRepository> enrichmentRepositoryProvider,
       Provider<NetworkHelper> networkHelperProvider) {
-    return new ScoutingViewModel_Factory(apiServiceProvider, tmApiServiceProvider, playerRepositoryProvider, playerDaoProvider, networkHelperProvider);
+    return new ScoutingViewModel_Factory(apiServiceProvider, tmApiServiceProvider, playerRepositoryProvider, playerDaoProvider, enrichmentRepositoryProvider, networkHelperProvider);
   }
 
   public static ScoutingViewModel newInstance(ScoutApiService apiService,
       TransfermarktApiService tmApiService, PlayerRepository playerRepository, PlayerDao playerDao,
-      NetworkHelper networkHelper) {
-    return new ScoutingViewModel(apiService, tmApiService, playerRepository, playerDao, networkHelper);
+      EnrichmentRepository enrichmentRepository, NetworkHelper networkHelper) {
+    return new ScoutingViewModel(apiService, tmApiService, playerRepository, playerDao, enrichmentRepository, networkHelper);
   }
 }

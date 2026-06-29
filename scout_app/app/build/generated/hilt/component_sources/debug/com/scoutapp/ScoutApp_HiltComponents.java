@@ -5,6 +5,7 @@ import com.scoutapp.di.NetworkModule;
 import com.scoutapp.di.RepositoryModule;
 import com.scoutapp.ui.screens.LeagueTeamsViewModel_HiltModules;
 import com.scoutapp.ui.screens.LeaguesViewModel_HiltModules;
+import com.scoutapp.ui.screens.PlayerListViewModel_HiltModules;
 import com.scoutapp.ui.screens.TeamDetailViewModel_HiltModules;
 import com.scoutapp.viewmodel.AIScoutViewModel_HiltModules;
 import com.scoutapp.viewmodel.PlayerDetailViewModel_HiltModules;
@@ -169,6 +170,7 @@ public final class ScoutApp_HiltComponents {
           LeagueTeamsViewModel_HiltModules.KeyModule.class,
           LeaguesViewModel_HiltModules.KeyModule.class,
           PlayerDetailViewModel_HiltModules.KeyModule.class,
+          PlayerListViewModel_HiltModules.KeyModule.class,
           PlayerStatsViewModel_HiltModules.KeyModule.class,
           ActivityCBuilderModule.class,
           ViewModelCBuilderModule.class,
@@ -214,6 +216,7 @@ public final class ScoutApp_HiltComponents {
           LeagueTeamsViewModel_HiltModules.BindsModule.class,
           LeaguesViewModel_HiltModules.BindsModule.class,
           PlayerDetailViewModel_HiltModules.BindsModule.class,
+          PlayerListViewModel_HiltModules.BindsModule.class,
           PlayerStatsViewModel_HiltModules.BindsModule.class,
           ScoutingViewModel_HiltModules.BindsModule.class,
           TeamDetailViewModel_HiltModules.BindsModule.class

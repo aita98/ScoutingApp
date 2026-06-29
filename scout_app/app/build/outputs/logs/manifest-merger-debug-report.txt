@@ -4,6 +4,7 @@ ADDED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.x
 INJECTED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml:2:1-28:12
 INJECTED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml:2:1-28:12
 INJECTED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml:2:1-28:12
+MERGED from [com.google.ai.client.generativeai:generativeai:0.7.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\ad8c7b87d98e5dff97e1bedab0d55d65\transformed\jetified-generativeai-0.7.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.hilt:hilt-navigation-compose:1.1.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\989f8dc0a008f0cf10bf257f3b4a41ca\transformed\jetified-hilt-navigation-compose-1.1.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.hilt:hilt-navigation:1.1.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\d2da6db56344639b882be2253dcba27c\transformed\jetified-hilt-navigation-1.1.0\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.dagger:hilt-android:2.51.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\4a0434f235f527a964a9d89520611e30\transformed\jetified-hilt-android-2.51.1\AndroidManifest.xml:16:1-19:12
@@ -56,6 +57,7 @@ MERGED from [androidx.vectordrawable:vectordrawable-animated:1.1.0] C:\Users\Enr
 MERGED from [androidx.vectordrawable:vectordrawable:1.1.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\c8af83e9ec7bdb8336d79f80f0fb030e\transformed\vectordrawable-1.1.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\9bb3254b36ab117d9c539dfeb1357af7\transformed\jetified-autofill-1.0.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.core:core:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\f3cc9489e0eada07ff5c8a4a34db46af\transformed\core-1.12.0\AndroidManifest.xml:17:1-30:12
+MERGED from [com.google.ai.client.generativeai:common:0.6.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\719f65d76f98817651b8b182a829b8f0\transformed\jetified-common-0.6.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\d841ec933881d9ffa1789f4d9cc3ad04\transformed\jetified-customview-poolingcontainer-1.0.0\AndroidManifest.xml:17:1-23:12
 MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\03e7796f452720122d75daf42e0ba618\transformed\jetified-core-ktx-1.12.0\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\7b8bd01601c2850aeef44f10f8f71329\transformed\room-runtime-2.6.1\AndroidManifest.xml:17:1-31:12
@@ -63,12 +65,12 @@ MERGED from [androidx.room:room-ktx:2.6.1] C:\Users\Enrico\.gradle\caches\8.13\t
 MERGED from [androidx.sqlite:sqlite-framework:2.4.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\9538245574bb12e73cf5f6633a98eaf9\transformed\sqlite-framework-2.4.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\be1e9f45945c8c7b512efa123343828d\transformed\sqlite-2.4.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.annotation:annotation-experimental:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\06156eae6537b95d257c4eda0674dcb2\transformed\jetified-annotation-experimental-1.3.1\AndroidManifest.xml:17:1-22:12
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
 MERGED from [androidx.compose.runtime:runtime-saveable-android:1.5.4] C:\Users\Enrico\.gradle\caches\8.13\transforms\d823e56900f3ac4f0ce9da98a7dff533\transformed\jetified-runtime-saveable-release\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.compose.runtime:runtime-android:1.5.4] C:\Users\Enrico\.gradle\caches\8.13\transforms\4407fdda156e7e7024e8fd582350961a\transformed\jetified-runtime-release\AndroidManifest.xml:2:1-7:12
 MERGED from [androidx.arch.core:core-runtime:2.2.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\168422d077de0af53244a065195746d5\transformed\core-runtime-2.2.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\03800ace81c17a5e0d7b754fb17f120b\transformed\interpolator-1.0.0\AndroidManifest.xml:17:1-22:12
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:17:1-27:12
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:17:1-55:12
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\e59369ac1e7d69797f6e40e94460bb8d\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:17:1-33:12
 MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\6dd78b30588077040a12302afd8a37b7\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.exifinterface:exifinterface:1.3.6] C:\Users\Enrico\.gradle\caches\8.13\transforms\b92a6f971784ad2205f9540d8034f65e\transformed\exifinterface-1.3.6\AndroidManifest.xml:17:1-24:12
@@ -84,6 +86,10 @@ MERGED from [com.google.dagger:dagger-lint-aar:2.51.1] C:\Users\Enrico\.gradle\c
 		ADDED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml:2:11-69
 uses-permission#android.permission.INTERNET
 ADDED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml:5:5-67
+MERGED from [com.google.ai.client.generativeai:generativeai:0.7.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\ad8c7b87d98e5dff97e1bedab0d55d65\transformed\jetified-generativeai-0.7.0\AndroidManifest.xml:22:5-67
+MERGED from [com.google.ai.client.generativeai:generativeai:0.7.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\ad8c7b87d98e5dff97e1bedab0d55d65\transformed\jetified-generativeai-0.7.0\AndroidManifest.xml:22:5-67
+MERGED from [com.google.ai.client.generativeai:common:0.6.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\719f65d76f98817651b8b182a829b8f0\transformed\jetified-common-0.6.0\AndroidManifest.xml:22:5-67
+MERGED from [com.google.ai.client.generativeai:common:0.6.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\719f65d76f98817651b8b182a829b8f0\transformed\jetified-common-0.6.0\AndroidManifest.xml:22:5-67
 	android:name
 		ADDED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml:5:22-64
 uses-permission#android.permission.ACCESS_NETWORK_STATE
@@ -101,10 +107,10 @@ MERGED from [androidx.core:core:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\tran
 MERGED from [androidx.core:core:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\f3cc9489e0eada07ff5c8a4a34db46af\transformed\core-1.12.0\AndroidManifest.xml:28:5-89
 MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\7b8bd01601c2850aeef44f10f8f71329\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
 MERGED from [androidx.room:room-runtime:2.6.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\7b8bd01601c2850aeef44f10f8f71329\transformed\room-runtime-2.6.1\AndroidManifest.xml:23:5-29:19
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
-MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
 MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:23:5-53:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
+MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:24:5-25:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\e59369ac1e7d69797f6e40e94460bb8d\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\e59369ac1e7d69797f6e40e94460bb8d\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:25:5-31:19
 	android:extractNativeLibs
@@ -149,6 +155,8 @@ uses-sdk
 INJECTED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml
 INJECTED from D:\Progetti\FootballScouting\scout_app\app\src\main\AndroidManifest.xml
+MERGED from [com.google.ai.client.generativeai:generativeai:0.7.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\ad8c7b87d98e5dff97e1bedab0d55d65\transformed\jetified-generativeai-0.7.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.ai.client.generativeai:generativeai:0.7.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\ad8c7b87d98e5dff97e1bedab0d55d65\transformed\jetified-generativeai-0.7.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.hilt:hilt-navigation-compose:1.1.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\989f8dc0a008f0cf10bf257f3b4a41ca\transformed\jetified-hilt-navigation-compose-1.1.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.hilt:hilt-navigation-compose:1.1.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\989f8dc0a008f0cf10bf257f3b4a41ca\transformed\jetified-hilt-navigation-compose-1.1.0\AndroidManifest.xml:5:5-44
 MERGED from [androidx.hilt:hilt-navigation:1.1.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\d2da6db56344639b882be2253dcba27c\transformed\jetified-hilt-navigation-1.1.0\AndroidManifest.xml:5:5-44
@@ -253,6 +261,8 @@ MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\Enrico\.gradle\caches\8.
 MERGED from [androidx.autofill:autofill:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\9bb3254b36ab117d9c539dfeb1357af7\transformed\jetified-autofill-1.0.0\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.core:core:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\f3cc9489e0eada07ff5c8a4a34db46af\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.core:core:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\f3cc9489e0eada07ff5c8a4a34db46af\transformed\core-1.12.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.ai.client.generativeai:common:0.6.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\719f65d76f98817651b8b182a829b8f0\transformed\jetified-common-0.6.0\AndroidManifest.xml:20:5-44
+MERGED from [com.google.ai.client.generativeai:common:0.6.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\719f65d76f98817651b8b182a829b8f0\transformed\jetified-common-0.6.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\d841ec933881d9ffa1789f4d9cc3ad04\transformed\jetified-customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
 MERGED from [androidx.customview:customview-poolingcontainer:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\d841ec933881d9ffa1789f4d9cc3ad04\transformed\jetified-customview-poolingcontainer-1.0.0\AndroidManifest.xml:20:5-21:38
 MERGED from [androidx.core:core-ktx:1.12.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\03e7796f452720122d75daf42e0ba618\transformed\jetified-core-ktx-1.12.0\AndroidManifest.xml:5:5-44
@@ -267,6 +277,8 @@ MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\Enrico\.gradle\caches\8.13\t
 MERGED from [androidx.sqlite:sqlite:2.4.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\be1e9f45945c8c7b512efa123343828d\transformed\sqlite-2.4.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.annotation:annotation-experimental:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\06156eae6537b95d257c4eda0674dcb2\transformed\jetified-annotation-experimental-1.3.1\AndroidManifest.xml:20:5-44
 MERGED from [androidx.annotation:annotation-experimental:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\06156eae6537b95d257c4eda0674dcb2\transformed\jetified-annotation-experimental-1.3.1\AndroidManifest.xml:20:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
+MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
 MERGED from [androidx.compose.runtime:runtime-saveable-android:1.5.4] C:\Users\Enrico\.gradle\caches\8.13\transforms\d823e56900f3ac4f0ce9da98a7dff533\transformed\jetified-runtime-saveable-release\AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-saveable-android:1.5.4] C:\Users\Enrico\.gradle\caches\8.13\transforms\d823e56900f3ac4f0ce9da98a7dff533\transformed\jetified-runtime-saveable-release\AndroidManifest.xml:5:5-44
 MERGED from [androidx.compose.runtime:runtime-android:1.5.4] C:\Users\Enrico\.gradle\caches\8.13\transforms\4407fdda156e7e7024e8fd582350961a\transformed\jetified-runtime-release\AndroidManifest.xml:5:5-44
@@ -277,8 +289,6 @@ MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\Enrico\.gradle\c
 MERGED from [androidx.interpolator:interpolator:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\03800ace81c17a5e0d7b754fb17f120b\transformed\interpolator-1.0.0\AndroidManifest.xml:20:5-44
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
 MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\0ce55eded2ca71a5f8f03c76b3acdf93\transformed\versionedparcelable-1.1.1\AndroidManifest.xml:20:5-22:41
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
-MERGED from [androidx.profileinstaller:profileinstaller:1.3.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\b2eef42cc8d0089a1953f32c8ee86c1d\transformed\jetified-profileinstaller-1.3.1\AndroidManifest.xml:21:5-44
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\e59369ac1e7d69797f6e40e94460bb8d\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.startup:startup-runtime:1.1.1] C:\Users\Enrico\.gradle\caches\8.13\transforms\e59369ac1e7d69797f6e40e94460bb8d\transformed\jetified-startup-runtime-1.1.1\AndroidManifest.xml:21:5-23:41
 MERGED from [androidx.tracing:tracing:1.0.0] C:\Users\Enrico\.gradle\caches\8.13\transforms\6dd78b30588077040a12302afd8a37b7\transformed\jetified-tracing-1.0.0\AndroidManifest.xml:20:5-22:41

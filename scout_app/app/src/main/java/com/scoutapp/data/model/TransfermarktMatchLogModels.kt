@@ -35,9 +35,11 @@ data class TransfermarktMatchPerformance(
 
 data class GameInformation(
     @SerializedName("gameId")
-    val gameId: String?, // Using String to be safe with IDs
+    val gameId: String?, 
     @SerializedName("competitionId")
     val competitionId: String?,
+    @SerializedName("seasonId")
+    val seasonId: Int?,
     @SerializedName("season")
     val season: SeasonInfo?,
     @SerializedName("date")
@@ -73,7 +75,23 @@ data class MatchStatistics(
     @SerializedName("distributionStatistics")
     val distributionStatistics: DistributionStatistics?,
     @SerializedName("playingTimeStatistics")
-    val playingTimeStatistics: PlayingTimeStatistics?
+    val playingTimeStatistics: PlayingTimeStatistics?,
+    @SerializedName("duelStatistics")
+    val duelStatistics: DuelStatistics?,
+    @SerializedName("generalStatistics")
+    val generalStatistics: GeneralStatistics?
+)
+
+data class DuelStatistics(
+    val tackles: Int? = null,
+    val tacklesWon: Int? = null,
+    val tacklesLost: Int? = null,
+    val groundDuels: Int? = null,
+    val groundDuelsWon: Int? = null,
+    val groundDuelsLost: Int? = null,
+    val aerialDuels: Int? = null,
+    val aerialDuelsWon: Int? = null,
+    val aerialDuelsLost: Int? = null
 )
 
 data class PlayingTimeStatistics(
@@ -94,12 +112,27 @@ data class GoalStatistics(
 
 data class CardStatistics(
     @SerializedName("yellowCardGross")
-    val yellowCardGross: Int?
+    val yellowCardGross: Int?,
+    @SerializedName("secondYellowCards")
+    val secondYellowCards: Int? = null,
+    @SerializedName("redCards")
+    val redCards: Int? = null
 )
 
 data class DistributionStatistics(
-    @SerializedName("passesReached")
-    val passesReached: Int?,
-    @SerializedName("passes")
-    val passes: Int?
+    val passes: Int? = null,
+    val passesReached: Int? = null,
+    val passesFailed: Int? = null,
+    val crosses: Int? = null,
+    val crossesReached: Int? = null,
+    val crossesFailed: Int? = null,
+    val longBalls: Int? = null,
+    val longBallsReached: Int? = null,
+    val longBallsFailed: Int? = null
+)
+
+data class GeneralStatistics(
+    val shirtNumber: Int? = null,
+    val isCaptain: Boolean? = null,
+    val participationState: String? = null
 )

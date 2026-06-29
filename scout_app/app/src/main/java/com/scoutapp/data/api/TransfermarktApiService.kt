@@ -24,6 +24,9 @@ interface TransfermarktApiService {
     @GET("players/{id}/jersey_numbers")
     suspend fun getPlayerJerseyNumbers(@Path("id") id: String): TransfermarktJerseyNumbersResponse
 
+    @GET("players/{id}/performance-game")
+    suspend fun getPlayerPerformanceGame(@Path("id") id: String): TransfermarktMatchLogResponse
+
     @GET("players/{id}/stats")
     suspend fun getPlayerDetailedStats(
         @Path("id") id: String,

@@ -28,6 +28,8 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.scoutapp.viewmodel.PlayerDetailState
 import com.scoutapp.viewmodel.PlayerDetailViewModel
+import com.scoutapp.utils.formatMarketValue
+import com.scoutapp.utils.formatAnyMarketValue
 import coil.compose.AsyncImage
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.foundation.shape.CircleShape
@@ -72,6 +74,7 @@ fun PlayerDetailScreen(
             val birthDate = currentState.birthDate
             val enrichedData = currentState.enrichedData
             val recentMatches = currentState.recentMatches ?: emptyList()
+            val tmPerformance = currentState.tmPerformance
             
             Column(
                 modifier = Modifier
@@ -161,7 +164,10 @@ fun PlayerDetailScreen(
                     ) {
                         InfoColumn("Foot", foot ?: "N/A")
                         InfoColumn("Number", shirtNumber ?: "N/A")
-                        val year = birthDate?.split("/")?.getOrNull(2) ?: "N/A"
+                        val year = birthDate?.let { date ->
+                            // Try to extract 4-digit year from string like "Jun 29, 2026" or "29/06/2026"
+                            Regex("\\d{4}").find(date)?.value ?: "N/A"
+                        } ?: "N/A"
                         InfoColumn("Born", year)
                         InfoColumn("Expires", contractExpires ?: "N/A")
                     }
@@ -380,6 +386,15 @@ fun PlayerDetailScreen(
                             .height(200.dp)
                             .padding(horizontal = 16.dp, vertical = 8.dp)
                     )
+
+                    // Performance Data Table (under Market Value Graph)
+                    if (currentState.competitionStats != null && currentState.competitionStats.competitions?.isNotEmpty() == true) {
+                        CompetitionStatsTable(currentState.competitionStats)
+                        Spacer(modifier = Modifier.height(24.dp))
+                    } else if (tmPerformance.isNotEmpty()) {
+                        PerformanceRendimentoTable(tmPerformance)
+                        Spacer(modifier = Modifier.height(24.dp))
+                    }
                 }
 
                 if (detailedStats.isNotEmpty()) {
@@ -694,54 +709,149 @@ fun StatTextItem(label: String, value: String) {
     }
 }
 
-fun formatMarketValue(value: Double?): String {
-    if (value == null || value == 0.0) return "N/A"
-    // Se il valore è molto piccolo (es. < 1000), è quasi certamente già in scala milioni (es. 120.0 invece di 120.000.000)
-    val normalized = if (value > 0 && value < 1000) value * 1_000_000.0 else value
+@Composable
+fun PerformanceRendimentoTable(performance: List<com.scoutapp.data.model.CompetitionPerformance>) {
+    val darkBlue = Color(0xFF001F3F) // Approximated dark blue for header
+    val headerTextColor = Color.White
     
-    return if (normalized >= 1_000_000) {
-        String.format(java.util.Locale.US, "%.1fM€", normalized / 1_000_000.0)
-    } else if (normalized >= 1_000) {
-        String.format(java.util.Locale.US, "%.0fK€", normalized / 1_000.0)
-    } else {
-        String.format(java.util.Locale.US, "%.0f€", normalized)
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        // RENDIMENTO Header
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(darkBlue)
+                .padding(vertical = 4.dp, horizontal = 8.dp)
+        ) {
+            Text(
+                text = "RENDIMENTO",
+                color = Color.White,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
+        }
+
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(0.dp), // Match the rectangular look in the image
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column {
+                // Icon Header Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                        .padding(vertical = 4.dp, horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Spacer(modifier = Modifier.weight(1.2f)) // Space for competition name/icon
+                    
+                    // Appearances Icon (Pitch with arrow)
+                    IconHeaderItem(Modifier.weight(0.4f), "🏟️↓")
+                    // Goals Icon (Ball)
+                    IconHeaderItem(Modifier.weight(0.4f), "⚽")
+                    // Assists Icon (Shoe/Ball)
+                    IconHeaderItem(Modifier.weight(0.4f), "👟")
+                    // Minutes per Goal Icon (Clock with Ball)
+                    IconHeaderItem(Modifier.weight(0.4f), "🕒⚽")
+                    // Minutes Played Icon (Clock)
+                    IconHeaderItem(Modifier.weight(0.4f), "🕒")
+                }
+
+                var totalPres = 0
+                var totalGoals = 0
+                var totalAssists = 0
+                var totalMins = 0
+
+                performance.forEach { compPerf ->
+                    val pres = compPerf.appearances
+                    val goals = compPerf.goals
+                    val assists = compPerf.assists
+                    val mins = compPerf.minutesPlayed
+                    
+                    totalPres += pres
+                    totalGoals += goals
+                    totalAssists += assists
+                    totalMins += mins
+
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(vertical = 8.dp, horizontal = 4.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        // Competition
+                        Row(modifier = Modifier.weight(1.2f), verticalAlignment = Alignment.CenterVertically) {
+                            if (compPerf.competitionImageUrl != null) {
+                                AsyncImage(
+                                    model = compPerf.competitionImageUrl,
+                                    contentDescription = null,
+                                    modifier = Modifier.size(20.dp).padding(end = 4.dp)
+                                )
+                            }
+                            Text(
+                                text = compPerf.competitionName,
+                                style = MaterialTheme.typography.bodySmall,
+                                fontWeight = FontWeight.Medium,
+                                color = Color(0xFF1A5F7A), // Link-like blue
+                                maxLines = 1,
+                                overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                            )
+                        }
+
+                        Text(pres.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center, color = Color(0xFF1A5F7A))
+                        Text(if (goals > 0) goals.toString() else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                        Text(if (assists > 0) assists.toString() else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                        
+                        val minsPerGoal = if (goals > 0) (mins / goals).toString() else "-"
+                        Text(if (minsPerGoal != "-") "$minsPerGoal'" else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+
+                        Text("${mins}'", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    }
+                    Divider(thickness = 0.5.dp, color = Color.LightGray.copy(alpha = 0.5f))
+                }
+
+                // Total Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .padding(vertical = 8.dp, horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Total:",
+                        modifier = Modifier
+                            .weight(1.2f)
+                            .padding(end = 8.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    )
+                    Text(totalPres.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    Text(totalGoals.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    Text(totalAssists.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    
+                    val avgMinsPerGoal = if (totalGoals > 0) (totalMins / totalGoals).toString() else "-"
+                    Text(if (avgMinsPerGoal != "-") "$avgMinsPerGoal'" else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    
+                    Text("${totalMins}'", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                }
+            }
+        }
     }
 }
 
-/**
- * Universal formatter for any market value type (String, Number, etc.)
- * Handles scientific notation, suffixes, and raw large numbers.
- */
-fun formatAnyMarketValue(value: Any?): String {
-    if (value == null) return "N/A"
-    
-    val rawString = value.toString().trim()
-    if (rawString.isEmpty() || rawString.lowercase() == "n/a" || rawString == "0") return "N/A"
-    
-    val cleanStr = rawString.replace("€", "").lowercase()
-    val hasM = cleanStr.contains("m")
-    val hasK = cleanStr.contains("k")
-    
-    val numericPart = cleanStr.replace("m", "").replace("k", "").replace(" ", "")
-        .replace(Regex("[^0-9.eE\\-]"), "")
-    
-    val d = numericPart.toDoubleOrNull() ?: return rawString
-    
-    // Normalizziamo in valore assoluto (Euro)
-    val absoluteValue = when {
-        hasM -> if (d > 1000) d else d * 1_000_000.0
-        hasK -> if (d > 1000000) d else d * 1_000.0
-        else -> if (d > 0 && d < 1000) d * 1_000_000.0 else d
-    }
-    
-    return if (absoluteValue >= 1_000_000) {
-        String.format(java.util.Locale.US, "%.1fM€", absoluteValue / 1_000_000.0)
-    } else if (absoluteValue >= 1_000) {
-        String.format(java.util.Locale.US, "%.0fK€", absoluteValue / 1_000.0)
-    } else {
-        String.format(java.util.Locale.US, "%.0f€", absoluteValue)
-    }
+@Composable
+fun IconHeaderItem(modifier: Modifier, iconText: String) {
+    Text(
+        text = iconText,
+        modifier = modifier,
+        textAlign = androidx.compose.ui.text.style.TextAlign.Center,
+        style = MaterialTheme.typography.labelSmall
+    )
 }
+
 
 @Composable
 fun FormChart(
@@ -781,7 +891,137 @@ fun FormChart(
     }
 }
 
-private fun calculateMatchScore(match: com.scoutapp.data.api.RecentMatch): Float {
+private @Composable
+fun CompetitionStatsTable(compStats: com.scoutapp.data.api.CompetitionStatsResponse) {
+    if (compStats.competitions.isNullOrEmpty()) return
+
+    Column(modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)) {
+        val darkBlue = Color(0xFF001F3F)
+        
+        // RENDIMENTO Header
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .background(darkBlue)
+                .padding(vertical = 4.dp, horizontal = 8.dp)
+        ) {
+            Text(
+                text = "Performance Data",
+                color = Color.White,
+                style = MaterialTheme.typography.titleSmall,
+                fontWeight = FontWeight.Bold
+            )
+        }
+        
+        Card(
+            modifier = Modifier.fillMaxWidth(),
+            shape = RoundedCornerShape(0.dp),
+            colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface)
+        ) {
+            Column {
+                // Icon Header Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.3f))
+                        .padding(vertical = 4.dp, horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text("Competitions", modifier = Modifier.weight(1.2f), fontWeight = FontWeight.Bold, style = MaterialTheme.typography.labelSmall)
+                    
+                    // Appearances Icon (Pitch with arrow)
+                    IconHeaderItem(Modifier.weight(0.4f), "🏟️↓")
+                    // Goals Icon (Ball)
+                    IconHeaderItem(Modifier.weight(0.4f), "⚽")
+                    // Assists Icon (Shoe/Ball)
+                    IconHeaderItem(Modifier.weight(0.4f), "👟")
+                    // Minutes per Goal Icon (Clock with Ball)
+                    IconHeaderItem(Modifier.weight(0.4f), "🕒⚽")
+                    // Minutes Played Icon (Clock)
+                    IconHeaderItem(Modifier.weight(0.4f), "🕒")
+                }
+                
+                var grandTotalGames = 0
+                var grandTotalGoals = 0
+                var grandTotalAssists = 0
+                var grandTotalMinutes = 0
+
+                compStats.competitions.forEach { (compKey, data) ->
+                    val totalGames = data.games?.count { it.participationState == "played" || it.minutes != null } ?: 0
+                    val totalGoals = data.games?.sumOf { it.goals ?: 0 } ?: 0
+                    val totalAssists = data.games?.sumOf { it.assists ?: 0 } ?: 0
+                    val totalMinutes = data.games?.sumOf { it.minutes ?: 0 } ?: 0
+                    
+                    grandTotalGames += totalGames
+                    grandTotalGoals += totalGoals
+                    grandTotalAssists += totalAssists
+                    grandTotalMinutes += totalMinutes
+
+                    if (totalGames > 0 || totalMinutes > 0) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp, horizontal = 4.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Row(modifier = Modifier.weight(1.2f), verticalAlignment = Alignment.CenterVertically) {
+                                if (data.competitionIconUrl != null) {
+                                    AsyncImage(
+                                        model = data.competitionIconUrl,
+                                        contentDescription = null,
+                                        modifier = Modifier.size(20.dp).padding(end = 4.dp)
+                                    )
+                                }
+                                Text(
+                                    text = data.competitionName ?: compKey,
+                                    style = MaterialTheme.typography.bodySmall,
+                                    fontWeight = FontWeight.Medium,
+                                    color = Color(0xFF1A5F7A),
+                                    maxLines = 1,
+                                    overflow = androidx.compose.ui.text.style.TextOverflow.Ellipsis
+                                )
+                            }
+                            Text(totalGames.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center, color = Color(0xFF1A5F7A))
+                            Text(if (totalGoals > 0) totalGoals.toString() else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                            Text(if (totalAssists > 0) totalAssists.toString() else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                            
+                            val minsPerGoal = if (totalGoals > 0) (totalMinutes / totalGoals).toString() else "-"
+                            Text(if (minsPerGoal != "-") "$minsPerGoal'" else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+
+                            Text("${totalMinutes}'", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, textAlign = androidx.compose.ui.text.style.TextAlign.End)
+                        }
+                        Divider(thickness = 0.5.dp, color = Color.LightGray.copy(alpha = 0.5f))
+                    }
+                }
+
+                // Totals Row
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .background(MaterialTheme.colorScheme.surfaceVariant.copy(alpha = 0.5f))
+                        .padding(vertical = 8.dp, horizontal = 4.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "Total:",
+                        modifier = Modifier.weight(1.2f).padding(end = 8.dp),
+                        style = MaterialTheme.typography.bodySmall,
+                        fontWeight = FontWeight.Bold,
+                        textAlign = androidx.compose.ui.text.style.TextAlign.End
+                    )
+                    Text(grandTotalGames.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    Text(grandTotalGoals.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    Text(grandTotalAssists.toString(), modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    
+                    val avgMinsPerGoal = if (grandTotalGoals > 0) (grandTotalMinutes / grandTotalGoals).toString() else "-"
+                    Text(if (avgMinsPerGoal != "-") "$avgMinsPerGoal'" else "-", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.Center)
+                    
+                    Text("${grandTotalMinutes}'", modifier = Modifier.weight(0.4f), style = MaterialTheme.typography.bodySmall, fontWeight = FontWeight.Bold, textAlign = androidx.compose.ui.text.style.TextAlign.End)
+                }
+            }
+        }
+    }
+}
+
+fun calculateMatchScore(match: com.scoutapp.data.api.RecentMatch): Float {
     var score = 5f // Base for appearing
     if (match.isStarting == true) score += 1f
     score += (match.goals ?: 0) * 3f

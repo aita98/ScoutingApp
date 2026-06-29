@@ -11,6 +11,7 @@ data class PlayerEntity(
     val fbrefId: String? = null,
     val name: String,
     val club: String?,
+    val league: String? = null,
     val age: Int? = null,
     val marketValue: Double? = null,
     val talentScore: Double,
@@ -25,6 +26,8 @@ data class PlayerEntity(
     val assists: Int? = null,
     val xG: Double? = null,
     val minutes: Int? = null,
+    val matchesPlayed: Int? = null,
+    val appearances: Int? = null,
     val goalsConceded: Int? = null,
     val cleanSheets: Int? = null,
 
@@ -44,9 +47,11 @@ data class PlayerEntity(
     val injuries: String? = null,
     val radarData: String? = null,
     val recentPerformanceJson: String? = null,
+    val performanceGameJson: String? = null,
     
     // FBRef data
     val fbrefStatsJson: String? = null,
+    val competitionStatsJson: String? = null,
 
     val lastUpdated: Long = System.currentTimeMillis()
 )

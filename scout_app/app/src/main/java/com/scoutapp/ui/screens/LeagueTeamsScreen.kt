@@ -5,6 +5,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Storage
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -15,37 +17,89 @@ import com.scoutapp.data.model.TransfermarktClub
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import javax.inject.Inject
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class LeagueTeamsViewModel @Inject constructor(
-    private val tmApiService: TransfermarktApiService
+    private val tmApiService: TransfermarktApiService,
+    private val scoutApiService: ScoutApiService,
+    private val teamDao: com.scoutapp.data.local.TeamDao
 ) : ViewModel() {
-    private val _teams = MutableStateFlow<List<TransfermarktClub>>(emptyList())
-    val teams: StateFlow<List<TransfermarktClub>> = _teams
-    
     private val _isLoading = MutableStateFlow(false)
     val isLoading: StateFlow<Boolean> = _isLoading
 
     private val _error = MutableStateFlow<String?>(null)
     val error: StateFlow<String?> = _error
 
+    private val _currentLeagueId = MutableStateFlow<String?>(null)
+
+    val displayTeams: StateFlow<List<TransfermarktClub>> = _currentLeagueId
+        .filterNotNull()
+        .flatMapLatest { leagueId ->
+            teamDao.getTeamsByLeague(leagueId).map { entities ->
+                entities.map { entity ->
+                    TransfermarktClub(
+                        id = entity.id,
+                        name = entity.name,
+                        imageUrl = entity.logoUrl
+                    )
+                }
+            }
+        }.stateIn(viewModelScope, SharingStarted.WhileSubscribed(5000), emptyList())
+
     fun loadTeams(leagueId: String) {
+        _currentLeagueId.value = leagueId
+        
         viewModelScope.launch {
             _isLoading.value = true
             _error.value = null
+            
             try {
-                if (leagueId == "FREE") {
-                    _teams.value = listOf(TransfermarktClub("515", "All Free Agents", null))
+                val teamsList = if (leagueId == "FREE" || leagueId == "FREE_AGENTS") {
+                    // Virtual team for Free Agents
+                    listOf(TransfermarktClub("515", "All Free Agents", null))
                 } else {
-                    val response = tmApiService.getCompetitionClubs(leagueId)
-                    _teams.value = response.clubs
+                    // Try Transfermarkt API first
+                    val tmResult = runCatching { tmApiService.getCompetitionClubs(leagueId) }
+                    
+                    if (tmResult.isSuccess) {
+                        tmResult.getOrThrow().clubs
+                    } else {
+                        // Fallback: If it's a numeric ID, it might be from our backend
+                        val numericId = leagueId.toLongOrNull()
+                        if (numericId != null) {
+                            scoutApiService.getTeams(numericId).map { 
+                                TransfermarktClub(it.id.toString(), it.name, it.logoUrl)
+                            }
+                        } else {
+                            throw tmResult.exceptionOrNull() ?: Exception("Unknown error")
+                        }
+                    }
+                }
+
+                // Save to DB
+                if (teamsList.isNotEmpty()) {
+                    teamDao.insertTeams(teamsList.map { 
+                        com.scoutapp.data.local.TeamEntity(
+                            id = it.id,
+                            name = it.name,
+                            leagueId = leagueId,
+                            logoUrl = it.imageUrl
+                        )
+                    })
+                } else {
+                    android.util.Log.w("LEAGUE_TEAMS", "No teams found for league $leagueId")
                 }
             } catch (e: Exception) {
-                _error.value = "Failed to load teams: ${e.message}"
+                android.util.Log.e("LEAGUE_TEAMS", "Error loading teams for $leagueId", e)
+                // Only show error if we have no cached data
+                if (displayTeams.value.isEmpty()) {
+                    _error.value = "Failed to load teams: ${e.message}"
+                }
             } finally {
                 _isLoading.value = false
             }
@@ -60,7 +114,7 @@ fun LeagueTeamsScreen(
     onTeamClick: (String) -> Unit,
     viewModel: LeagueTeamsViewModel = androidx.hilt.navigation.compose.hiltViewModel()
 ) {
-    val teams by viewModel.teams.collectAsState()
+    val teams by viewModel.displayTeams.collectAsState()
     val loading by viewModel.isLoading.collectAsState()
     val error by viewModel.error.collectAsState()
 
@@ -92,7 +146,19 @@ fun LeagueTeamsScreen(
                         onClick = { onTeamClick(team.id) },
                         modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp)
                     ) {
-                        Row(modifier = Modifier.padding(16.dp)) {
+                        Row(
+                            modifier = Modifier.padding(16.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            val isCached = true // Now all teams in displayTeams are from DB
+                            if (isCached) {
+                                Icon(
+                                    Icons.Default.Storage,
+                                    contentDescription = "Cached",
+                                    tint = MaterialTheme.colorScheme.tertiary,
+                                    modifier = Modifier.size(20.dp).padding(end = 12.dp)
+                                )
+                            }
                             Column {
                                 Text(text = team.name, style = MaterialTheme.typography.titleMedium)
                             }

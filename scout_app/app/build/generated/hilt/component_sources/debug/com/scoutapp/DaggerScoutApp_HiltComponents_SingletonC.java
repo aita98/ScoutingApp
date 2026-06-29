@@ -7,19 +7,27 @@ import androidx.fragment.app.Fragment;
 import androidx.lifecycle.SavedStateHandle;
 import androidx.lifecycle.ViewModel;
 import com.google.gson.Gson;
+import com.scoutapp.data.api.GroqApiService;
+import com.scoutapp.data.api.GroqService;
 import com.scoutapp.data.api.ScoutApiService;
 import com.scoutapp.data.api.TransfermarktApiService;
 import com.scoutapp.data.api.fbref.FbrefApi;
+import com.scoutapp.data.local.LeagueDao;
 import com.scoutapp.data.local.MatchDao;
 import com.scoutapp.data.local.PlayerDao;
 import com.scoutapp.data.local.ScoutDatabase;
+import com.scoutapp.data.local.TeamDao;
 import com.scoutapp.data.repository.EnrichmentRepository;
 import com.scoutapp.data.repository.PlayerRepositoryImpl;
 import com.scoutapp.di.DatabaseModule_ProvideDatabaseFactory;
+import com.scoutapp.di.DatabaseModule_ProvideLeagueDaoFactory;
 import com.scoutapp.di.DatabaseModule_ProvideMatchDaoFactory;
 import com.scoutapp.di.DatabaseModule_ProvidePlayerDaoFactory;
+import com.scoutapp.di.DatabaseModule_ProvideTeamDaoFactory;
 import com.scoutapp.di.NetworkModule_ProvideFbrefApiFactory;
 import com.scoutapp.di.NetworkModule_ProvideFbrefRetrofitFactory;
+import com.scoutapp.di.NetworkModule_ProvideGroqApiServiceFactory;
+import com.scoutapp.di.NetworkModule_ProvideGroqRetrofitFactory;
 import com.scoutapp.di.NetworkModule_ProvideGsonFactory;
 import com.scoutapp.di.NetworkModule_ProvideOkHttpClientFactory;
 import com.scoutapp.di.NetworkModule_ProvideScoutApiServiceFactory;
@@ -30,6 +38,8 @@ import com.scoutapp.ui.screens.LeagueTeamsViewModel;
 import com.scoutapp.ui.screens.LeagueTeamsViewModel_HiltModules;
 import com.scoutapp.ui.screens.LeaguesViewModel;
 import com.scoutapp.ui.screens.LeaguesViewModel_HiltModules;
+import com.scoutapp.ui.screens.PlayerListViewModel;
+import com.scoutapp.ui.screens.PlayerListViewModel_HiltModules;
 import com.scoutapp.ui.screens.TeamDetailViewModel;
 import com.scoutapp.ui.screens.TeamDetailViewModel_HiltModules;
 import com.scoutapp.utils.NetworkHelper;
@@ -403,7 +413,7 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
 
     @Override
     public Map<Class<?>, Boolean> getViewModelKeys() {
-      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(7).put(LazyClassKeyProvider.com_scoutapp_viewmodel_AIScoutViewModel, AIScoutViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeagueTeamsViewModel, LeagueTeamsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeaguesViewModel, LeaguesViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerDetailViewModel, PlayerDetailViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerStatsViewModel, PlayerStatsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_viewmodel_ScoutingViewModel, ScoutingViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_TeamDetailViewModel, TeamDetailViewModel_HiltModules.KeyModule.provide()).build());
+      return LazyClassKeyMap.<Boolean>of(MapBuilder.<String, Boolean>newMapBuilder(8).put(LazyClassKeyProvider.com_scoutapp_viewmodel_AIScoutViewModel, AIScoutViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeagueTeamsViewModel, LeagueTeamsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeaguesViewModel, LeaguesViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerDetailViewModel, PlayerDetailViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_PlayerListViewModel, PlayerListViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerStatsViewModel, PlayerStatsViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_viewmodel_ScoutingViewModel, ScoutingViewModel_HiltModules.KeyModule.provide()).put(LazyClassKeyProvider.com_scoutapp_ui_screens_TeamDetailViewModel, TeamDetailViewModel_HiltModules.KeyModule.provide()).build());
     }
 
     @Override
@@ -423,40 +433,45 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_scoutapp_ui_screens_LeagueTeamsViewModel = "com.scoutapp.ui.screens.LeagueTeamsViewModel";
-
-      static String com_scoutapp_viewmodel_PlayerDetailViewModel = "com.scoutapp.viewmodel.PlayerDetailViewModel";
-
       static String com_scoutapp_viewmodel_ScoutingViewModel = "com.scoutapp.viewmodel.ScoutingViewModel";
-
-      static String com_scoutapp_viewmodel_AIScoutViewModel = "com.scoutapp.viewmodel.AIScoutViewModel";
-
-      static String com_scoutapp_ui_screens_LeaguesViewModel = "com.scoutapp.ui.screens.LeaguesViewModel";
 
       static String com_scoutapp_viewmodel_PlayerStatsViewModel = "com.scoutapp.viewmodel.PlayerStatsViewModel";
 
+      static String com_scoutapp_ui_screens_LeagueTeamsViewModel = "com.scoutapp.ui.screens.LeagueTeamsViewModel";
+
+      static String com_scoutapp_ui_screens_LeaguesViewModel = "com.scoutapp.ui.screens.LeaguesViewModel";
+
       static String com_scoutapp_ui_screens_TeamDetailViewModel = "com.scoutapp.ui.screens.TeamDetailViewModel";
 
-      @KeepFieldType
-      LeagueTeamsViewModel com_scoutapp_ui_screens_LeagueTeamsViewModel2;
+      static String com_scoutapp_viewmodel_PlayerDetailViewModel = "com.scoutapp.viewmodel.PlayerDetailViewModel";
 
-      @KeepFieldType
-      PlayerDetailViewModel com_scoutapp_viewmodel_PlayerDetailViewModel2;
+      static String com_scoutapp_viewmodel_AIScoutViewModel = "com.scoutapp.viewmodel.AIScoutViewModel";
+
+      static String com_scoutapp_ui_screens_PlayerListViewModel = "com.scoutapp.ui.screens.PlayerListViewModel";
 
       @KeepFieldType
       ScoutingViewModel com_scoutapp_viewmodel_ScoutingViewModel2;
 
       @KeepFieldType
-      AIScoutViewModel com_scoutapp_viewmodel_AIScoutViewModel2;
+      PlayerStatsViewModel com_scoutapp_viewmodel_PlayerStatsViewModel2;
+
+      @KeepFieldType
+      LeagueTeamsViewModel com_scoutapp_ui_screens_LeagueTeamsViewModel2;
 
       @KeepFieldType
       LeaguesViewModel com_scoutapp_ui_screens_LeaguesViewModel2;
 
       @KeepFieldType
-      PlayerStatsViewModel com_scoutapp_viewmodel_PlayerStatsViewModel2;
+      TeamDetailViewModel com_scoutapp_ui_screens_TeamDetailViewModel2;
 
       @KeepFieldType
-      TeamDetailViewModel com_scoutapp_ui_screens_TeamDetailViewModel2;
+      PlayerDetailViewModel com_scoutapp_viewmodel_PlayerDetailViewModel2;
+
+      @KeepFieldType
+      AIScoutViewModel com_scoutapp_viewmodel_AIScoutViewModel2;
+
+      @KeepFieldType
+      PlayerListViewModel com_scoutapp_ui_screens_PlayerListViewModel2;
     }
   }
 
@@ -474,6 +489,8 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
     private Provider<LeaguesViewModel> leaguesViewModelProvider;
 
     private Provider<PlayerDetailViewModel> playerDetailViewModelProvider;
+
+    private Provider<PlayerListViewModel> playerListViewModelProvider;
 
     private Provider<PlayerStatsViewModel> playerStatsViewModelProvider;
 
@@ -498,14 +515,15 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
       this.leagueTeamsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 1);
       this.leaguesViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 2);
       this.playerDetailViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 3);
-      this.playerStatsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
-      this.scoutingViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
-      this.teamDetailViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
+      this.playerListViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 4);
+      this.playerStatsViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 5);
+      this.scoutingViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 6);
+      this.teamDetailViewModelProvider = new SwitchingProvider<>(singletonCImpl, activityRetainedCImpl, viewModelCImpl, 7);
     }
 
     @Override
     public Map<Class<?>, javax.inject.Provider<ViewModel>> getHiltViewModelMap() {
-      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(7).put(LazyClassKeyProvider.com_scoutapp_viewmodel_AIScoutViewModel, ((Provider) aIScoutViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeagueTeamsViewModel, ((Provider) leagueTeamsViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeaguesViewModel, ((Provider) leaguesViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerDetailViewModel, ((Provider) playerDetailViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerStatsViewModel, ((Provider) playerStatsViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_viewmodel_ScoutingViewModel, ((Provider) scoutingViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_TeamDetailViewModel, ((Provider) teamDetailViewModelProvider)).build());
+      return LazyClassKeyMap.<javax.inject.Provider<ViewModel>>of(MapBuilder.<String, javax.inject.Provider<ViewModel>>newMapBuilder(8).put(LazyClassKeyProvider.com_scoutapp_viewmodel_AIScoutViewModel, ((Provider) aIScoutViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeagueTeamsViewModel, ((Provider) leagueTeamsViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_LeaguesViewModel, ((Provider) leaguesViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerDetailViewModel, ((Provider) playerDetailViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_PlayerListViewModel, ((Provider) playerListViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_viewmodel_PlayerStatsViewModel, ((Provider) playerStatsViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_viewmodel_ScoutingViewModel, ((Provider) scoutingViewModelProvider)).put(LazyClassKeyProvider.com_scoutapp_ui_screens_TeamDetailViewModel, ((Provider) teamDetailViewModelProvider)).build());
     }
 
     @Override
@@ -515,11 +533,11 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
 
     @IdentifierNameString
     private static final class LazyClassKeyProvider {
-      static String com_scoutapp_viewmodel_PlayerDetailViewModel = "com.scoutapp.viewmodel.PlayerDetailViewModel";
+      static String com_scoutapp_viewmodel_AIScoutViewModel = "com.scoutapp.viewmodel.AIScoutViewModel";
 
       static String com_scoutapp_ui_screens_TeamDetailViewModel = "com.scoutapp.ui.screens.TeamDetailViewModel";
 
-      static String com_scoutapp_ui_screens_LeagueTeamsViewModel = "com.scoutapp.ui.screens.LeagueTeamsViewModel";
+      static String com_scoutapp_ui_screens_PlayerListViewModel = "com.scoutapp.ui.screens.PlayerListViewModel";
 
       static String com_scoutapp_viewmodel_ScoutingViewModel = "com.scoutapp.viewmodel.ScoutingViewModel";
 
@@ -527,16 +545,18 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
 
       static String com_scoutapp_ui_screens_LeaguesViewModel = "com.scoutapp.ui.screens.LeaguesViewModel";
 
-      static String com_scoutapp_viewmodel_AIScoutViewModel = "com.scoutapp.viewmodel.AIScoutViewModel";
+      static String com_scoutapp_viewmodel_PlayerDetailViewModel = "com.scoutapp.viewmodel.PlayerDetailViewModel";
+
+      static String com_scoutapp_ui_screens_LeagueTeamsViewModel = "com.scoutapp.ui.screens.LeagueTeamsViewModel";
 
       @KeepFieldType
-      PlayerDetailViewModel com_scoutapp_viewmodel_PlayerDetailViewModel2;
+      AIScoutViewModel com_scoutapp_viewmodel_AIScoutViewModel2;
 
       @KeepFieldType
       TeamDetailViewModel com_scoutapp_ui_screens_TeamDetailViewModel2;
 
       @KeepFieldType
-      LeagueTeamsViewModel com_scoutapp_ui_screens_LeagueTeamsViewModel2;
+      PlayerListViewModel com_scoutapp_ui_screens_PlayerListViewModel2;
 
       @KeepFieldType
       ScoutingViewModel com_scoutapp_viewmodel_ScoutingViewModel2;
@@ -548,7 +568,10 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
       LeaguesViewModel com_scoutapp_ui_screens_LeaguesViewModel2;
 
       @KeepFieldType
-      AIScoutViewModel com_scoutapp_viewmodel_AIScoutViewModel2;
+      PlayerDetailViewModel com_scoutapp_viewmodel_PlayerDetailViewModel2;
+
+      @KeepFieldType
+      LeagueTeamsViewModel com_scoutapp_ui_screens_LeagueTeamsViewModel2;
     }
 
     private static final class SwitchingProvider<T> implements Provider<T> {
@@ -573,25 +596,28 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
       public T get() {
         switch (id) {
           case 0: // com.scoutapp.viewmodel.AIScoutViewModel 
-          return (T) new AIScoutViewModel(singletonCImpl.provideScoutApiServiceProvider.get());
+          return (T) new AIScoutViewModel(singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.groqServiceProvider.get());
 
           case 1: // com.scoutapp.ui.screens.LeagueTeamsViewModel 
-          return (T) new LeagueTeamsViewModel(singletonCImpl.provideTransfermarktApiServiceProvider.get());
+          return (T) new LeagueTeamsViewModel(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.teamDao());
 
           case 2: // com.scoutapp.ui.screens.LeaguesViewModel 
-          return (T) new LeaguesViewModel(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get());
+          return (T) new LeaguesViewModel(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.leagueDao());
 
           case 3: // com.scoutapp.viewmodel.PlayerDetailViewModel 
           return (T) new PlayerDetailViewModel(singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.playerRepositoryImplProvider.get(), singletonCImpl.playerDao(), singletonCImpl.enrichmentRepositoryProvider.get(), singletonCImpl.provideGsonProvider.get());
 
-          case 4: // com.scoutapp.viewmodel.PlayerStatsViewModel 
+          case 4: // com.scoutapp.ui.screens.PlayerListViewModel 
+          return (T) new PlayerListViewModel(singletonCImpl.provideScoutApiServiceProvider.get());
+
+          case 5: // com.scoutapp.viewmodel.PlayerStatsViewModel 
           return (T) new PlayerStatsViewModel(singletonCImpl.playerRepositoryImplProvider.get());
 
-          case 5: // com.scoutapp.viewmodel.ScoutingViewModel 
-          return (T) new ScoutingViewModel(singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.playerRepositoryImplProvider.get(), singletonCImpl.playerDao(), singletonCImpl.networkHelperProvider.get());
+          case 6: // com.scoutapp.viewmodel.ScoutingViewModel 
+          return (T) new ScoutingViewModel(singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.playerRepositoryImplProvider.get(), singletonCImpl.playerDao(), singletonCImpl.enrichmentRepositoryProvider.get(), singletonCImpl.networkHelperProvider.get());
 
-          case 6: // com.scoutapp.ui.screens.TeamDetailViewModel 
-          return (T) new TeamDetailViewModel(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get());
+          case 7: // com.scoutapp.ui.screens.TeamDetailViewModel 
+          return (T) new TeamDetailViewModel(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.playerDao());
 
           default: throw new AssertionError(id);
         }
@@ -679,15 +705,21 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
 
     private Provider<ScoutApiService> provideScoutApiServiceProvider;
 
+    private Provider<Retrofit> provideGroqRetrofitProvider;
+
+    private Provider<GroqApiService> provideGroqApiServiceProvider;
+
+    private Provider<GroqService> groqServiceProvider;
+
     private Provider<Retrofit> provideTransfermarktRetrofitProvider;
 
     private Provider<TransfermarktApiService> provideTransfermarktApiServiceProvider;
 
+    private Provider<ScoutDatabase> provideDatabaseProvider;
+
     private Provider<Retrofit> provideFbrefRetrofitProvider;
 
     private Provider<FbrefApi> provideFbrefApiProvider;
-
-    private Provider<ScoutDatabase> provideDatabaseProvider;
 
     private Provider<PlayerRepositoryImpl> playerRepositoryImplProvider;
 
@@ -703,6 +735,14 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
 
     }
 
+    private TeamDao teamDao() {
+      return DatabaseModule_ProvideTeamDaoFactory.provideTeamDao(provideDatabaseProvider.get());
+    }
+
+    private LeagueDao leagueDao() {
+      return DatabaseModule_ProvideLeagueDaoFactory.provideLeagueDao(provideDatabaseProvider.get());
+    }
+
     private MatchDao matchDao() {
       return DatabaseModule_ProvideMatchDaoFactory.provideMatchDao(provideDatabaseProvider.get());
     }
@@ -716,15 +756,18 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
       this.provideOkHttpClientProvider = DoubleCheck.provider(new SwitchingProvider<OkHttpClient>(singletonCImpl, 2));
       this.provideScoutRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 1));
       this.provideScoutApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<ScoutApiService>(singletonCImpl, 0));
-      this.provideTransfermarktRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 4));
-      this.provideTransfermarktApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<TransfermarktApiService>(singletonCImpl, 3));
-      this.provideFbrefRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 7));
-      this.provideFbrefApiProvider = DoubleCheck.provider(new SwitchingProvider<FbrefApi>(singletonCImpl, 6));
+      this.provideGroqRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 5));
+      this.provideGroqApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<GroqApiService>(singletonCImpl, 4));
+      this.groqServiceProvider = DoubleCheck.provider(new SwitchingProvider<GroqService>(singletonCImpl, 3));
+      this.provideTransfermarktRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 7));
+      this.provideTransfermarktApiServiceProvider = DoubleCheck.provider(new SwitchingProvider<TransfermarktApiService>(singletonCImpl, 6));
       this.provideDatabaseProvider = DoubleCheck.provider(new SwitchingProvider<ScoutDatabase>(singletonCImpl, 8));
-      this.playerRepositoryImplProvider = DoubleCheck.provider(new SwitchingProvider<PlayerRepositoryImpl>(singletonCImpl, 5));
-      this.provideGsonProvider = DoubleCheck.provider(new SwitchingProvider<Gson>(singletonCImpl, 10));
-      this.enrichmentRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<EnrichmentRepository>(singletonCImpl, 9));
-      this.networkHelperProvider = DoubleCheck.provider(new SwitchingProvider<NetworkHelper>(singletonCImpl, 11));
+      this.provideFbrefRetrofitProvider = DoubleCheck.provider(new SwitchingProvider<Retrofit>(singletonCImpl, 11));
+      this.provideFbrefApiProvider = DoubleCheck.provider(new SwitchingProvider<FbrefApi>(singletonCImpl, 10));
+      this.playerRepositoryImplProvider = DoubleCheck.provider(new SwitchingProvider<PlayerRepositoryImpl>(singletonCImpl, 9));
+      this.provideGsonProvider = DoubleCheck.provider(new SwitchingProvider<Gson>(singletonCImpl, 13));
+      this.enrichmentRepositoryProvider = DoubleCheck.provider(new SwitchingProvider<EnrichmentRepository>(singletonCImpl, 12));
+      this.networkHelperProvider = DoubleCheck.provider(new SwitchingProvider<NetworkHelper>(singletonCImpl, 14));
     }
 
     @Override
@@ -769,31 +812,40 @@ public final class DaggerScoutApp_HiltComponents_SingletonC {
           case 2: // okhttp3.OkHttpClient 
           return (T) NetworkModule_ProvideOkHttpClientFactory.provideOkHttpClient();
 
-          case 3: // com.scoutapp.data.api.TransfermarktApiService 
+          case 3: // com.scoutapp.data.api.GroqService 
+          return (T) new GroqService(singletonCImpl.provideGroqApiServiceProvider.get());
+
+          case 4: // com.scoutapp.data.api.GroqApiService 
+          return (T) NetworkModule_ProvideGroqApiServiceFactory.provideGroqApiService(singletonCImpl.provideGroqRetrofitProvider.get());
+
+          case 5: // @javax.inject.Named("GroqRetrofit") retrofit2.Retrofit 
+          return (T) NetworkModule_ProvideGroqRetrofitFactory.provideGroqRetrofit(singletonCImpl.provideOkHttpClientProvider.get());
+
+          case 6: // com.scoutapp.data.api.TransfermarktApiService 
           return (T) NetworkModule_ProvideTransfermarktApiServiceFactory.provideTransfermarktApiService(singletonCImpl.provideTransfermarktRetrofitProvider.get());
 
-          case 4: // @javax.inject.Named("TransfermarktRetrofit") retrofit2.Retrofit 
+          case 7: // @javax.inject.Named("TransfermarktRetrofit") retrofit2.Retrofit 
           return (T) NetworkModule_ProvideTransfermarktRetrofitFactory.provideTransfermarktRetrofit(singletonCImpl.provideOkHttpClientProvider.get());
-
-          case 5: // com.scoutapp.data.repository.PlayerRepositoryImpl 
-          return (T) new PlayerRepositoryImpl(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideFbrefApiProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.matchDao());
-
-          case 6: // com.scoutapp.data.api.fbref.FbrefApi 
-          return (T) NetworkModule_ProvideFbrefApiFactory.provideFbrefApi(singletonCImpl.provideFbrefRetrofitProvider.get());
-
-          case 7: // @javax.inject.Named("FbrefRetrofit") retrofit2.Retrofit 
-          return (T) NetworkModule_ProvideFbrefRetrofitFactory.provideFbrefRetrofit(singletonCImpl.provideOkHttpClientProvider.get());
 
           case 8: // com.scoutapp.data.local.ScoutDatabase 
           return (T) DatabaseModule_ProvideDatabaseFactory.provideDatabase(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
-          case 9: // com.scoutapp.data.repository.EnrichmentRepository 
+          case 9: // com.scoutapp.data.repository.PlayerRepositoryImpl 
+          return (T) new PlayerRepositoryImpl(singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.provideFbrefApiProvider.get(), singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.matchDao());
+
+          case 10: // com.scoutapp.data.api.fbref.FbrefApi 
+          return (T) NetworkModule_ProvideFbrefApiFactory.provideFbrefApi(singletonCImpl.provideFbrefRetrofitProvider.get());
+
+          case 11: // @javax.inject.Named("FbrefRetrofit") retrofit2.Retrofit 
+          return (T) NetworkModule_ProvideFbrefRetrofitFactory.provideFbrefRetrofit(singletonCImpl.provideOkHttpClientProvider.get());
+
+          case 12: // com.scoutapp.data.repository.EnrichmentRepository 
           return (T) new EnrichmentRepository(singletonCImpl.provideScoutApiServiceProvider.get(), singletonCImpl.provideTransfermarktApiServiceProvider.get(), singletonCImpl.playerDao(), singletonCImpl.provideGsonProvider.get());
 
-          case 10: // com.google.gson.Gson 
+          case 13: // com.google.gson.Gson 
           return (T) NetworkModule_ProvideGsonFactory.provideGson();
 
-          case 11: // com.scoutapp.utils.NetworkHelper 
+          case 14: // com.scoutapp.utils.NetworkHelper 
           return (T) new NetworkHelper(ApplicationContextModule_ProvideContextFactory.provideContext(singletonCImpl.applicationContextModule));
 
           default: throw new AssertionError(id);

@@ -5,8 +5,10 @@ import android.os.CancellationSignal;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.CoroutinesRoom;
+import androidx.room.EntityDeletionOrUpdateAdapter;
 import androidx.room.EntityInsertionAdapter;
 import androidx.room.RoomDatabase;
+import androidx.room.RoomDatabaseKt;
 import androidx.room.RoomSQLiteQuery;
 import androidx.room.SharedSQLiteStatement;
 import androidx.room.util.CursorUtil;
@@ -16,6 +18,7 @@ import java.lang.Class;
 import java.lang.Double;
 import java.lang.Exception;
 import java.lang.Integer;
+import java.lang.Long;
 import java.lang.Object;
 import java.lang.Override;
 import java.lang.String;
@@ -38,6 +41,8 @@ public final class PlayerDao_Impl implements PlayerDao {
 
   private final EntityInsertionAdapter<PlayerEnrichmentEntity> __insertionAdapterOfPlayerEnrichmentEntity;
 
+  private final EntityDeletionOrUpdateAdapter<PlayerEntity> __updateAdapterOfPlayerEntity;
+
   private final SharedSQLiteStatement __preparedStmtOfUpdateWatchlistStatus;
 
   private final SharedSQLiteStatement __preparedStmtOfUpdateWatchlistStatusByTmId;
@@ -52,7 +57,7 @@ public final class PlayerDao_Impl implements PlayerDao {
       @Override
       @NonNull
       protected String createQuery() {
-        return "INSERT OR REPLACE INTO `cached_players` (`id`,`tmId`,`fbrefSlug`,`fbrefId`,`name`,`club`,`age`,`marketValue`,`talentScore`,`hiddenGemScore`,`position`,`photoUrl`,`isRetired`,`isWatchlisted`,`season`,`goals`,`assists`,`xG`,`minutes`,`goalsConceded`,`cleanSheets`,`foot`,`shirtNumber`,`citizenship`,`contractExpires`,`birthDate`,`seasonalStats`,`detailedStats`,`achievements`,`marketValueHistory`,`transfers`,`injuries`,`radarData`,`recentPerformanceJson`,`fbrefStatsJson`,`lastUpdated`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        return "INSERT OR IGNORE INTO `cached_players` (`id`,`tmId`,`fbrefSlug`,`fbrefId`,`name`,`club`,`league`,`age`,`marketValue`,`talentScore`,`hiddenGemScore`,`position`,`photoUrl`,`isRetired`,`isWatchlisted`,`season`,`goals`,`assists`,`xG`,`minutes`,`matchesPlayed`,`appearances`,`goalsConceded`,`cleanSheets`,`foot`,`shirtNumber`,`citizenship`,`contractExpires`,`birthDate`,`seasonalStats`,`detailedStats`,`achievements`,`marketValueHistory`,`transfers`,`injuries`,`radarData`,`recentPerformanceJson`,`performanceGameJson`,`fbrefStatsJson`,`competitionStatsJson`,`lastUpdated`) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
       }
 
       @Override
@@ -84,138 +89,163 @@ public final class PlayerDao_Impl implements PlayerDao {
         } else {
           statement.bindString(6, entity.getClub());
         }
-        if (entity.getAge() == null) {
+        if (entity.getLeague() == null) {
           statement.bindNull(7);
         } else {
-          statement.bindLong(7, entity.getAge());
+          statement.bindString(7, entity.getLeague());
         }
-        if (entity.getMarketValue() == null) {
+        if (entity.getAge() == null) {
           statement.bindNull(8);
         } else {
-          statement.bindDouble(8, entity.getMarketValue());
+          statement.bindLong(8, entity.getAge());
         }
-        statement.bindDouble(9, entity.getTalentScore());
-        statement.bindDouble(10, entity.getHiddenGemScore());
-        if (entity.getPosition() == null) {
-          statement.bindNull(11);
+        if (entity.getMarketValue() == null) {
+          statement.bindNull(9);
         } else {
-          statement.bindString(11, entity.getPosition());
+          statement.bindDouble(9, entity.getMarketValue());
         }
-        if (entity.getPhotoUrl() == null) {
+        statement.bindDouble(10, entity.getTalentScore());
+        statement.bindDouble(11, entity.getHiddenGemScore());
+        if (entity.getPosition() == null) {
           statement.bindNull(12);
         } else {
-          statement.bindString(12, entity.getPhotoUrl());
+          statement.bindString(12, entity.getPosition());
+        }
+        if (entity.getPhotoUrl() == null) {
+          statement.bindNull(13);
+        } else {
+          statement.bindString(13, entity.getPhotoUrl());
         }
         final int _tmp = entity.isRetired() ? 1 : 0;
-        statement.bindLong(13, _tmp);
+        statement.bindLong(14, _tmp);
         final int _tmp_1 = entity.isWatchlisted() ? 1 : 0;
-        statement.bindLong(14, _tmp_1);
+        statement.bindLong(15, _tmp_1);
         if (entity.getSeason() == null) {
-          statement.bindNull(15);
-        } else {
-          statement.bindString(15, entity.getSeason());
-        }
-        if (entity.getGoals() == null) {
           statement.bindNull(16);
         } else {
-          statement.bindLong(16, entity.getGoals());
+          statement.bindString(16, entity.getSeason());
         }
-        if (entity.getAssists() == null) {
+        if (entity.getGoals() == null) {
           statement.bindNull(17);
         } else {
-          statement.bindLong(17, entity.getAssists());
+          statement.bindLong(17, entity.getGoals());
         }
-        if (entity.getXG() == null) {
+        if (entity.getAssists() == null) {
           statement.bindNull(18);
         } else {
-          statement.bindDouble(18, entity.getXG());
+          statement.bindLong(18, entity.getAssists());
         }
-        if (entity.getMinutes() == null) {
+        if (entity.getXG() == null) {
           statement.bindNull(19);
         } else {
-          statement.bindLong(19, entity.getMinutes());
+          statement.bindDouble(19, entity.getXG());
         }
-        if (entity.getGoalsConceded() == null) {
+        if (entity.getMinutes() == null) {
           statement.bindNull(20);
         } else {
-          statement.bindLong(20, entity.getGoalsConceded());
+          statement.bindLong(20, entity.getMinutes());
         }
-        if (entity.getCleanSheets() == null) {
+        if (entity.getMatchesPlayed() == null) {
           statement.bindNull(21);
         } else {
-          statement.bindLong(21, entity.getCleanSheets());
+          statement.bindLong(21, entity.getMatchesPlayed());
         }
-        if (entity.getFoot() == null) {
+        if (entity.getAppearances() == null) {
           statement.bindNull(22);
         } else {
-          statement.bindString(22, entity.getFoot());
+          statement.bindLong(22, entity.getAppearances());
         }
-        if (entity.getShirtNumber() == null) {
+        if (entity.getGoalsConceded() == null) {
           statement.bindNull(23);
         } else {
-          statement.bindString(23, entity.getShirtNumber());
+          statement.bindLong(23, entity.getGoalsConceded());
         }
-        if (entity.getCitizenship() == null) {
+        if (entity.getCleanSheets() == null) {
           statement.bindNull(24);
         } else {
-          statement.bindString(24, entity.getCitizenship());
+          statement.bindLong(24, entity.getCleanSheets());
         }
-        if (entity.getContractExpires() == null) {
+        if (entity.getFoot() == null) {
           statement.bindNull(25);
         } else {
-          statement.bindString(25, entity.getContractExpires());
+          statement.bindString(25, entity.getFoot());
         }
-        if (entity.getBirthDate() == null) {
+        if (entity.getShirtNumber() == null) {
           statement.bindNull(26);
         } else {
-          statement.bindString(26, entity.getBirthDate());
+          statement.bindString(26, entity.getShirtNumber());
         }
-        if (entity.getSeasonalStats() == null) {
+        if (entity.getCitizenship() == null) {
           statement.bindNull(27);
         } else {
-          statement.bindString(27, entity.getSeasonalStats());
+          statement.bindString(27, entity.getCitizenship());
         }
-        if (entity.getDetailedStats() == null) {
+        if (entity.getContractExpires() == null) {
           statement.bindNull(28);
         } else {
-          statement.bindString(28, entity.getDetailedStats());
+          statement.bindString(28, entity.getContractExpires());
         }
-        if (entity.getAchievements() == null) {
+        if (entity.getBirthDate() == null) {
           statement.bindNull(29);
         } else {
-          statement.bindString(29, entity.getAchievements());
+          statement.bindString(29, entity.getBirthDate());
         }
-        if (entity.getMarketValueHistory() == null) {
+        if (entity.getSeasonalStats() == null) {
           statement.bindNull(30);
         } else {
-          statement.bindString(30, entity.getMarketValueHistory());
+          statement.bindString(30, entity.getSeasonalStats());
         }
-        if (entity.getTransfers() == null) {
+        if (entity.getDetailedStats() == null) {
           statement.bindNull(31);
         } else {
-          statement.bindString(31, entity.getTransfers());
+          statement.bindString(31, entity.getDetailedStats());
         }
-        if (entity.getInjuries() == null) {
+        if (entity.getAchievements() == null) {
           statement.bindNull(32);
         } else {
-          statement.bindString(32, entity.getInjuries());
+          statement.bindString(32, entity.getAchievements());
         }
-        if (entity.getRadarData() == null) {
+        if (entity.getMarketValueHistory() == null) {
           statement.bindNull(33);
         } else {
-          statement.bindString(33, entity.getRadarData());
+          statement.bindString(33, entity.getMarketValueHistory());
         }
-        if (entity.getRecentPerformanceJson() == null) {
+        if (entity.getTransfers() == null) {
           statement.bindNull(34);
         } else {
-          statement.bindString(34, entity.getRecentPerformanceJson());
+          statement.bindString(34, entity.getTransfers());
         }
-        if (entity.getFbrefStatsJson() == null) {
+        if (entity.getInjuries() == null) {
           statement.bindNull(35);
         } else {
-          statement.bindString(35, entity.getFbrefStatsJson());
+          statement.bindString(35, entity.getInjuries());
         }
-        statement.bindLong(36, entity.getLastUpdated());
+        if (entity.getRadarData() == null) {
+          statement.bindNull(36);
+        } else {
+          statement.bindString(36, entity.getRadarData());
+        }
+        if (entity.getRecentPerformanceJson() == null) {
+          statement.bindNull(37);
+        } else {
+          statement.bindString(37, entity.getRecentPerformanceJson());
+        }
+        if (entity.getPerformanceGameJson() == null) {
+          statement.bindNull(38);
+        } else {
+          statement.bindString(38, entity.getPerformanceGameJson());
+        }
+        if (entity.getFbrefStatsJson() == null) {
+          statement.bindNull(39);
+        } else {
+          statement.bindString(39, entity.getFbrefStatsJson());
+        }
+        if (entity.getCompetitionStatsJson() == null) {
+          statement.bindNull(40);
+        } else {
+          statement.bindString(40, entity.getCompetitionStatsJson());
+        }
+        statement.bindLong(41, entity.getLastUpdated());
       }
     };
     this.__insertionAdapterOfPlayerEnrichmentEntity = new EntityInsertionAdapter<PlayerEnrichmentEntity>(__db) {
@@ -243,6 +273,202 @@ public final class PlayerDao_Impl implements PlayerDao {
         statement.bindLong(5, entity.getLastUpdated());
       }
     };
+    this.__updateAdapterOfPlayerEntity = new EntityDeletionOrUpdateAdapter<PlayerEntity>(__db) {
+      @Override
+      @NonNull
+      protected String createQuery() {
+        return "UPDATE OR ABORT `cached_players` SET `id` = ?,`tmId` = ?,`fbrefSlug` = ?,`fbrefId` = ?,`name` = ?,`club` = ?,`league` = ?,`age` = ?,`marketValue` = ?,`talentScore` = ?,`hiddenGemScore` = ?,`position` = ?,`photoUrl` = ?,`isRetired` = ?,`isWatchlisted` = ?,`season` = ?,`goals` = ?,`assists` = ?,`xG` = ?,`minutes` = ?,`matchesPlayed` = ?,`appearances` = ?,`goalsConceded` = ?,`cleanSheets` = ?,`foot` = ?,`shirtNumber` = ?,`citizenship` = ?,`contractExpires` = ?,`birthDate` = ?,`seasonalStats` = ?,`detailedStats` = ?,`achievements` = ?,`marketValueHistory` = ?,`transfers` = ?,`injuries` = ?,`radarData` = ?,`recentPerformanceJson` = ?,`performanceGameJson` = ?,`fbrefStatsJson` = ?,`competitionStatsJson` = ?,`lastUpdated` = ? WHERE `id` = ?";
+      }
+
+      @Override
+      protected void bind(@NonNull final SupportSQLiteStatement statement,
+          @NonNull final PlayerEntity entity) {
+        statement.bindLong(1, entity.getId());
+        if (entity.getTmId() == null) {
+          statement.bindNull(2);
+        } else {
+          statement.bindString(2, entity.getTmId());
+        }
+        if (entity.getFbrefSlug() == null) {
+          statement.bindNull(3);
+        } else {
+          statement.bindString(3, entity.getFbrefSlug());
+        }
+        if (entity.getFbrefId() == null) {
+          statement.bindNull(4);
+        } else {
+          statement.bindString(4, entity.getFbrefId());
+        }
+        if (entity.getName() == null) {
+          statement.bindNull(5);
+        } else {
+          statement.bindString(5, entity.getName());
+        }
+        if (entity.getClub() == null) {
+          statement.bindNull(6);
+        } else {
+          statement.bindString(6, entity.getClub());
+        }
+        if (entity.getLeague() == null) {
+          statement.bindNull(7);
+        } else {
+          statement.bindString(7, entity.getLeague());
+        }
+        if (entity.getAge() == null) {
+          statement.bindNull(8);
+        } else {
+          statement.bindLong(8, entity.getAge());
+        }
+        if (entity.getMarketValue() == null) {
+          statement.bindNull(9);
+        } else {
+          statement.bindDouble(9, entity.getMarketValue());
+        }
+        statement.bindDouble(10, entity.getTalentScore());
+        statement.bindDouble(11, entity.getHiddenGemScore());
+        if (entity.getPosition() == null) {
+          statement.bindNull(12);
+        } else {
+          statement.bindString(12, entity.getPosition());
+        }
+        if (entity.getPhotoUrl() == null) {
+          statement.bindNull(13);
+        } else {
+          statement.bindString(13, entity.getPhotoUrl());
+        }
+        final int _tmp = entity.isRetired() ? 1 : 0;
+        statement.bindLong(14, _tmp);
+        final int _tmp_1 = entity.isWatchlisted() ? 1 : 0;
+        statement.bindLong(15, _tmp_1);
+        if (entity.getSeason() == null) {
+          statement.bindNull(16);
+        } else {
+          statement.bindString(16, entity.getSeason());
+        }
+        if (entity.getGoals() == null) {
+          statement.bindNull(17);
+        } else {
+          statement.bindLong(17, entity.getGoals());
+        }
+        if (entity.getAssists() == null) {
+          statement.bindNull(18);
+        } else {
+          statement.bindLong(18, entity.getAssists());
+        }
+        if (entity.getXG() == null) {
+          statement.bindNull(19);
+        } else {
+          statement.bindDouble(19, entity.getXG());
+        }
+        if (entity.getMinutes() == null) {
+          statement.bindNull(20);
+        } else {
+          statement.bindLong(20, entity.getMinutes());
+        }
+        if (entity.getMatchesPlayed() == null) {
+          statement.bindNull(21);
+        } else {
+          statement.bindLong(21, entity.getMatchesPlayed());
+        }
+        if (entity.getAppearances() == null) {
+          statement.bindNull(22);
+        } else {
+          statement.bindLong(22, entity.getAppearances());
+        }
+        if (entity.getGoalsConceded() == null) {
+          statement.bindNull(23);
+        } else {
+          statement.bindLong(23, entity.getGoalsConceded());
+        }
+        if (entity.getCleanSheets() == null) {
+          statement.bindNull(24);
+        } else {
+          statement.bindLong(24, entity.getCleanSheets());
+        }
+        if (entity.getFoot() == null) {
+          statement.bindNull(25);
+        } else {
+          statement.bindString(25, entity.getFoot());
+        }
+        if (entity.getShirtNumber() == null) {
+          statement.bindNull(26);
+        } else {
+          statement.bindString(26, entity.getShirtNumber());
+        }
+        if (entity.getCitizenship() == null) {
+          statement.bindNull(27);
+        } else {
+          statement.bindString(27, entity.getCitizenship());
+        }
+        if (entity.getContractExpires() == null) {
+          statement.bindNull(28);
+        } else {
+          statement.bindString(28, entity.getContractExpires());
+        }
+        if (entity.getBirthDate() == null) {
+          statement.bindNull(29);
+        } else {
+          statement.bindString(29, entity.getBirthDate());
+        }
+        if (entity.getSeasonalStats() == null) {
+          statement.bindNull(30);
+        } else {
+          statement.bindString(30, entity.getSeasonalStats());
+        }
+        if (entity.getDetailedStats() == null) {
+          statement.bindNull(31);
+        } else {
+          statement.bindString(31, entity.getDetailedStats());
+        }
+        if (entity.getAchievements() == null) {
+          statement.bindNull(32);
+        } else {
+          statement.bindString(32, entity.getAchievements());
+        }
+        if (entity.getMarketValueHistory() == null) {
+          statement.bindNull(33);
+        } else {
+          statement.bindString(33, entity.getMarketValueHistory());
+        }
+        if (entity.getTransfers() == null) {
+          statement.bindNull(34);
+        } else {
+          statement.bindString(34, entity.getTransfers());
+        }
+        if (entity.getInjuries() == null) {
+          statement.bindNull(35);
+        } else {
+          statement.bindString(35, entity.getInjuries());
+        }
+        if (entity.getRadarData() == null) {
+          statement.bindNull(36);
+        } else {
+          statement.bindString(36, entity.getRadarData());
+        }
+        if (entity.getRecentPerformanceJson() == null) {
+          statement.bindNull(37);
+        } else {
+          statement.bindString(37, entity.getRecentPerformanceJson());
+        }
+        if (entity.getPerformanceGameJson() == null) {
+          statement.bindNull(38);
+        } else {
+          statement.bindString(38, entity.getPerformanceGameJson());
+        }
+        if (entity.getFbrefStatsJson() == null) {
+          statement.bindNull(39);
+        } else {
+          statement.bindString(39, entity.getFbrefStatsJson());
+        }
+        if (entity.getCompetitionStatsJson() == null) {
+          statement.bindNull(40);
+        } else {
+          statement.bindString(40, entity.getCompetitionStatsJson());
+        }
+        statement.bindLong(41, entity.getLastUpdated());
+        statement.bindLong(42, entity.getId());
+      }
+    };
     this.__preparedStmtOfUpdateWatchlistStatus = new SharedSQLiteStatement(__db) {
       @Override
       @NonNull
@@ -263,7 +489,7 @@ public final class PlayerDao_Impl implements PlayerDao {
       @Override
       @NonNull
       public String createQuery() {
-        final String _query = "UPDATE cached_players SET goals = ?, assists = ?, minutes = ? WHERE id = ?";
+        final String _query = "UPDATE cached_players SET goals = ?, assists = ?, minutes = ?, matchesPlayed = ? WHERE id = ?";
         return _query;
       }
     };
@@ -278,17 +504,17 @@ public final class PlayerDao_Impl implements PlayerDao {
   }
 
   @Override
-  public Object insertPlayers(final List<PlayerEntity> players,
-      final Continuation<? super Unit> arg1) {
-    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+  public Object insertPlayersRaw(final List<PlayerEntity> players,
+      final Continuation<? super List<Long>> arg1) {
+    return CoroutinesRoom.execute(__db, true, new Callable<List<Long>>() {
       @Override
       @NonNull
-      public Unit call() throws Exception {
+      public List<Long> call() throws Exception {
         __db.beginTransaction();
         try {
-          __insertionAdapterOfPlayerEntity.insert(players);
+          final List<Long> _result = __insertionAdapterOfPlayerEntity.insertAndReturnIdsList(players);
           __db.setTransactionSuccessful();
-          return Unit.INSTANCE;
+          return _result;
         } finally {
           __db.endTransaction();
         }
@@ -313,6 +539,30 @@ public final class PlayerDao_Impl implements PlayerDao {
         }
       }
     }, arg1);
+  }
+
+  @Override
+  public Object updatePlayer(final PlayerEntity player, final Continuation<? super Unit> arg1) {
+    return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
+      @Override
+      @NonNull
+      public Unit call() throws Exception {
+        __db.beginTransaction();
+        try {
+          __updateAdapterOfPlayerEntity.handle(player);
+          __db.setTransactionSuccessful();
+          return Unit.INSTANCE;
+        } finally {
+          __db.endTransaction();
+        }
+      }
+    }, arg1);
+  }
+
+  @Override
+  public Object upsertPlayersPreservingLocalFields(final List<PlayerEntity> players,
+      final Continuation<? super Unit> arg1) {
+    return RoomDatabaseKt.withTransaction(__db, (__cont) -> PlayerDao.DefaultImpls.upsertPlayersPreservingLocalFields(PlayerDao_Impl.this, players, __cont), arg1);
   }
 
   @Override
@@ -379,7 +629,7 @@ public final class PlayerDao_Impl implements PlayerDao {
 
   @Override
   public Object updateStatsCache(final long playerId, final int goals, final int assists,
-      final int minutes, final Continuation<? super Unit> arg4) {
+      final int minutes, final int matchesPlayed, final Continuation<? super Unit> arg5) {
     return CoroutinesRoom.execute(__db, true, new Callable<Unit>() {
       @Override
       @NonNull
@@ -392,6 +642,8 @@ public final class PlayerDao_Impl implements PlayerDao {
         _argIndex = 3;
         _stmt.bindLong(_argIndex, minutes);
         _argIndex = 4;
+        _stmt.bindLong(_argIndex, matchesPlayed);
+        _argIndex = 5;
         _stmt.bindLong(_argIndex, playerId);
         try {
           __db.beginTransaction();
@@ -406,7 +658,7 @@ public final class PlayerDao_Impl implements PlayerDao {
           __preparedStmtOfUpdateStatsCache.release(_stmt);
         }
       }
-    }, arg4);
+    }, arg5);
   }
 
   @Override
@@ -457,6 +709,7 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfFbrefId = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefId");
           final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
           final int _cursorIndexOfClub = CursorUtil.getColumnIndexOrThrow(_cursor, "club");
+          final int _cursorIndexOfLeague = CursorUtil.getColumnIndexOrThrow(_cursor, "league");
           final int _cursorIndexOfAge = CursorUtil.getColumnIndexOrThrow(_cursor, "age");
           final int _cursorIndexOfMarketValue = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValue");
           final int _cursorIndexOfTalentScore = CursorUtil.getColumnIndexOrThrow(_cursor, "talentScore");
@@ -470,6 +723,8 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfAssists = CursorUtil.getColumnIndexOrThrow(_cursor, "assists");
           final int _cursorIndexOfXG = CursorUtil.getColumnIndexOrThrow(_cursor, "xG");
           final int _cursorIndexOfMinutes = CursorUtil.getColumnIndexOrThrow(_cursor, "minutes");
+          final int _cursorIndexOfMatchesPlayed = CursorUtil.getColumnIndexOrThrow(_cursor, "matchesPlayed");
+          final int _cursorIndexOfAppearances = CursorUtil.getColumnIndexOrThrow(_cursor, "appearances");
           final int _cursorIndexOfGoalsConceded = CursorUtil.getColumnIndexOrThrow(_cursor, "goalsConceded");
           final int _cursorIndexOfCleanSheets = CursorUtil.getColumnIndexOrThrow(_cursor, "cleanSheets");
           final int _cursorIndexOfFoot = CursorUtil.getColumnIndexOrThrow(_cursor, "foot");
@@ -485,7 +740,9 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfInjuries = CursorUtil.getColumnIndexOrThrow(_cursor, "injuries");
           final int _cursorIndexOfRadarData = CursorUtil.getColumnIndexOrThrow(_cursor, "radarData");
           final int _cursorIndexOfRecentPerformanceJson = CursorUtil.getColumnIndexOrThrow(_cursor, "recentPerformanceJson");
+          final int _cursorIndexOfPerformanceGameJson = CursorUtil.getColumnIndexOrThrow(_cursor, "performanceGameJson");
           final int _cursorIndexOfFbrefStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefStatsJson");
+          final int _cursorIndexOfCompetitionStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "competitionStatsJson");
           final int _cursorIndexOfLastUpdated = CursorUtil.getColumnIndexOrThrow(_cursor, "lastUpdated");
           final List<PlayerEntity> _result = new ArrayList<PlayerEntity>(_cursor.getCount());
           while (_cursor.moveToNext()) {
@@ -522,6 +779,12 @@ public final class PlayerDao_Impl implements PlayerDao {
             } else {
               _tmpClub = _cursor.getString(_cursorIndexOfClub);
             }
+            final String _tmpLeague;
+            if (_cursor.isNull(_cursorIndexOfLeague)) {
+              _tmpLeague = null;
+            } else {
+              _tmpLeague = _cursor.getString(_cursorIndexOfLeague);
+            }
             final Integer _tmpAge;
             if (_cursor.isNull(_cursorIndexOfAge)) {
               _tmpAge = null;
@@ -587,6 +850,18 @@ public final class PlayerDao_Impl implements PlayerDao {
               _tmpMinutes = null;
             } else {
               _tmpMinutes = _cursor.getInt(_cursorIndexOfMinutes);
+            }
+            final Integer _tmpMatchesPlayed;
+            if (_cursor.isNull(_cursorIndexOfMatchesPlayed)) {
+              _tmpMatchesPlayed = null;
+            } else {
+              _tmpMatchesPlayed = _cursor.getInt(_cursorIndexOfMatchesPlayed);
+            }
+            final Integer _tmpAppearances;
+            if (_cursor.isNull(_cursorIndexOfAppearances)) {
+              _tmpAppearances = null;
+            } else {
+              _tmpAppearances = _cursor.getInt(_cursorIndexOfAppearances);
             }
             final Integer _tmpGoalsConceded;
             if (_cursor.isNull(_cursorIndexOfGoalsConceded)) {
@@ -678,15 +953,27 @@ public final class PlayerDao_Impl implements PlayerDao {
             } else {
               _tmpRecentPerformanceJson = _cursor.getString(_cursorIndexOfRecentPerformanceJson);
             }
+            final String _tmpPerformanceGameJson;
+            if (_cursor.isNull(_cursorIndexOfPerformanceGameJson)) {
+              _tmpPerformanceGameJson = null;
+            } else {
+              _tmpPerformanceGameJson = _cursor.getString(_cursorIndexOfPerformanceGameJson);
+            }
             final String _tmpFbrefStatsJson;
             if (_cursor.isNull(_cursorIndexOfFbrefStatsJson)) {
               _tmpFbrefStatsJson = null;
             } else {
               _tmpFbrefStatsJson = _cursor.getString(_cursorIndexOfFbrefStatsJson);
             }
+            final String _tmpCompetitionStatsJson;
+            if (_cursor.isNull(_cursorIndexOfCompetitionStatsJson)) {
+              _tmpCompetitionStatsJson = null;
+            } else {
+              _tmpCompetitionStatsJson = _cursor.getString(_cursorIndexOfCompetitionStatsJson);
+            }
             final long _tmpLastUpdated;
             _tmpLastUpdated = _cursor.getLong(_cursorIndexOfLastUpdated);
-            _item = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpFbrefStatsJson,_tmpLastUpdated);
+            _item = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpLeague,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpMatchesPlayed,_tmpAppearances,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpPerformanceGameJson,_tmpFbrefStatsJson,_tmpCompetitionStatsJson,_tmpLastUpdated);
             _result.add(_item);
           }
           return _result;
@@ -721,6 +1008,7 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfFbrefId = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefId");
           final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
           final int _cursorIndexOfClub = CursorUtil.getColumnIndexOrThrow(_cursor, "club");
+          final int _cursorIndexOfLeague = CursorUtil.getColumnIndexOrThrow(_cursor, "league");
           final int _cursorIndexOfAge = CursorUtil.getColumnIndexOrThrow(_cursor, "age");
           final int _cursorIndexOfMarketValue = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValue");
           final int _cursorIndexOfTalentScore = CursorUtil.getColumnIndexOrThrow(_cursor, "talentScore");
@@ -734,6 +1022,8 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfAssists = CursorUtil.getColumnIndexOrThrow(_cursor, "assists");
           final int _cursorIndexOfXG = CursorUtil.getColumnIndexOrThrow(_cursor, "xG");
           final int _cursorIndexOfMinutes = CursorUtil.getColumnIndexOrThrow(_cursor, "minutes");
+          final int _cursorIndexOfMatchesPlayed = CursorUtil.getColumnIndexOrThrow(_cursor, "matchesPlayed");
+          final int _cursorIndexOfAppearances = CursorUtil.getColumnIndexOrThrow(_cursor, "appearances");
           final int _cursorIndexOfGoalsConceded = CursorUtil.getColumnIndexOrThrow(_cursor, "goalsConceded");
           final int _cursorIndexOfCleanSheets = CursorUtil.getColumnIndexOrThrow(_cursor, "cleanSheets");
           final int _cursorIndexOfFoot = CursorUtil.getColumnIndexOrThrow(_cursor, "foot");
@@ -749,7 +1039,9 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfInjuries = CursorUtil.getColumnIndexOrThrow(_cursor, "injuries");
           final int _cursorIndexOfRadarData = CursorUtil.getColumnIndexOrThrow(_cursor, "radarData");
           final int _cursorIndexOfRecentPerformanceJson = CursorUtil.getColumnIndexOrThrow(_cursor, "recentPerformanceJson");
+          final int _cursorIndexOfPerformanceGameJson = CursorUtil.getColumnIndexOrThrow(_cursor, "performanceGameJson");
           final int _cursorIndexOfFbrefStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefStatsJson");
+          final int _cursorIndexOfCompetitionStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "competitionStatsJson");
           final int _cursorIndexOfLastUpdated = CursorUtil.getColumnIndexOrThrow(_cursor, "lastUpdated");
           final PlayerEntity _result;
           if (_cursor.moveToFirst()) {
@@ -785,6 +1077,12 @@ public final class PlayerDao_Impl implements PlayerDao {
             } else {
               _tmpClub = _cursor.getString(_cursorIndexOfClub);
             }
+            final String _tmpLeague;
+            if (_cursor.isNull(_cursorIndexOfLeague)) {
+              _tmpLeague = null;
+            } else {
+              _tmpLeague = _cursor.getString(_cursorIndexOfLeague);
+            }
             final Integer _tmpAge;
             if (_cursor.isNull(_cursorIndexOfAge)) {
               _tmpAge = null;
@@ -850,6 +1148,18 @@ public final class PlayerDao_Impl implements PlayerDao {
               _tmpMinutes = null;
             } else {
               _tmpMinutes = _cursor.getInt(_cursorIndexOfMinutes);
+            }
+            final Integer _tmpMatchesPlayed;
+            if (_cursor.isNull(_cursorIndexOfMatchesPlayed)) {
+              _tmpMatchesPlayed = null;
+            } else {
+              _tmpMatchesPlayed = _cursor.getInt(_cursorIndexOfMatchesPlayed);
+            }
+            final Integer _tmpAppearances;
+            if (_cursor.isNull(_cursorIndexOfAppearances)) {
+              _tmpAppearances = null;
+            } else {
+              _tmpAppearances = _cursor.getInt(_cursorIndexOfAppearances);
             }
             final Integer _tmpGoalsConceded;
             if (_cursor.isNull(_cursorIndexOfGoalsConceded)) {
@@ -941,15 +1251,27 @@ public final class PlayerDao_Impl implements PlayerDao {
             } else {
               _tmpRecentPerformanceJson = _cursor.getString(_cursorIndexOfRecentPerformanceJson);
             }
+            final String _tmpPerformanceGameJson;
+            if (_cursor.isNull(_cursorIndexOfPerformanceGameJson)) {
+              _tmpPerformanceGameJson = null;
+            } else {
+              _tmpPerformanceGameJson = _cursor.getString(_cursorIndexOfPerformanceGameJson);
+            }
             final String _tmpFbrefStatsJson;
             if (_cursor.isNull(_cursorIndexOfFbrefStatsJson)) {
               _tmpFbrefStatsJson = null;
             } else {
               _tmpFbrefStatsJson = _cursor.getString(_cursorIndexOfFbrefStatsJson);
             }
+            final String _tmpCompetitionStatsJson;
+            if (_cursor.isNull(_cursorIndexOfCompetitionStatsJson)) {
+              _tmpCompetitionStatsJson = null;
+            } else {
+              _tmpCompetitionStatsJson = _cursor.getString(_cursorIndexOfCompetitionStatsJson);
+            }
             final long _tmpLastUpdated;
             _tmpLastUpdated = _cursor.getLong(_cursorIndexOfLastUpdated);
-            _result = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpFbrefStatsJson,_tmpLastUpdated);
+            _result = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpLeague,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpMatchesPlayed,_tmpAppearances,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpPerformanceGameJson,_tmpFbrefStatsJson,_tmpCompetitionStatsJson,_tmpLastUpdated);
           } else {
             _result = null;
           }
@@ -985,6 +1307,7 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfFbrefId = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefId");
           final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
           final int _cursorIndexOfClub = CursorUtil.getColumnIndexOrThrow(_cursor, "club");
+          final int _cursorIndexOfLeague = CursorUtil.getColumnIndexOrThrow(_cursor, "league");
           final int _cursorIndexOfAge = CursorUtil.getColumnIndexOrThrow(_cursor, "age");
           final int _cursorIndexOfMarketValue = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValue");
           final int _cursorIndexOfTalentScore = CursorUtil.getColumnIndexOrThrow(_cursor, "talentScore");
@@ -998,6 +1321,8 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfAssists = CursorUtil.getColumnIndexOrThrow(_cursor, "assists");
           final int _cursorIndexOfXG = CursorUtil.getColumnIndexOrThrow(_cursor, "xG");
           final int _cursorIndexOfMinutes = CursorUtil.getColumnIndexOrThrow(_cursor, "minutes");
+          final int _cursorIndexOfMatchesPlayed = CursorUtil.getColumnIndexOrThrow(_cursor, "matchesPlayed");
+          final int _cursorIndexOfAppearances = CursorUtil.getColumnIndexOrThrow(_cursor, "appearances");
           final int _cursorIndexOfGoalsConceded = CursorUtil.getColumnIndexOrThrow(_cursor, "goalsConceded");
           final int _cursorIndexOfCleanSheets = CursorUtil.getColumnIndexOrThrow(_cursor, "cleanSheets");
           final int _cursorIndexOfFoot = CursorUtil.getColumnIndexOrThrow(_cursor, "foot");
@@ -1013,7 +1338,9 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfInjuries = CursorUtil.getColumnIndexOrThrow(_cursor, "injuries");
           final int _cursorIndexOfRadarData = CursorUtil.getColumnIndexOrThrow(_cursor, "radarData");
           final int _cursorIndexOfRecentPerformanceJson = CursorUtil.getColumnIndexOrThrow(_cursor, "recentPerformanceJson");
+          final int _cursorIndexOfPerformanceGameJson = CursorUtil.getColumnIndexOrThrow(_cursor, "performanceGameJson");
           final int _cursorIndexOfFbrefStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefStatsJson");
+          final int _cursorIndexOfCompetitionStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "competitionStatsJson");
           final int _cursorIndexOfLastUpdated = CursorUtil.getColumnIndexOrThrow(_cursor, "lastUpdated");
           final PlayerEntity _result;
           if (_cursor.moveToFirst()) {
@@ -1048,6 +1375,12 @@ public final class PlayerDao_Impl implements PlayerDao {
               _tmpClub = null;
             } else {
               _tmpClub = _cursor.getString(_cursorIndexOfClub);
+            }
+            final String _tmpLeague;
+            if (_cursor.isNull(_cursorIndexOfLeague)) {
+              _tmpLeague = null;
+            } else {
+              _tmpLeague = _cursor.getString(_cursorIndexOfLeague);
             }
             final Integer _tmpAge;
             if (_cursor.isNull(_cursorIndexOfAge)) {
@@ -1114,6 +1447,18 @@ public final class PlayerDao_Impl implements PlayerDao {
               _tmpMinutes = null;
             } else {
               _tmpMinutes = _cursor.getInt(_cursorIndexOfMinutes);
+            }
+            final Integer _tmpMatchesPlayed;
+            if (_cursor.isNull(_cursorIndexOfMatchesPlayed)) {
+              _tmpMatchesPlayed = null;
+            } else {
+              _tmpMatchesPlayed = _cursor.getInt(_cursorIndexOfMatchesPlayed);
+            }
+            final Integer _tmpAppearances;
+            if (_cursor.isNull(_cursorIndexOfAppearances)) {
+              _tmpAppearances = null;
+            } else {
+              _tmpAppearances = _cursor.getInt(_cursorIndexOfAppearances);
             }
             final Integer _tmpGoalsConceded;
             if (_cursor.isNull(_cursorIndexOfGoalsConceded)) {
@@ -1205,15 +1550,27 @@ public final class PlayerDao_Impl implements PlayerDao {
             } else {
               _tmpRecentPerformanceJson = _cursor.getString(_cursorIndexOfRecentPerformanceJson);
             }
+            final String _tmpPerformanceGameJson;
+            if (_cursor.isNull(_cursorIndexOfPerformanceGameJson)) {
+              _tmpPerformanceGameJson = null;
+            } else {
+              _tmpPerformanceGameJson = _cursor.getString(_cursorIndexOfPerformanceGameJson);
+            }
             final String _tmpFbrefStatsJson;
             if (_cursor.isNull(_cursorIndexOfFbrefStatsJson)) {
               _tmpFbrefStatsJson = null;
             } else {
               _tmpFbrefStatsJson = _cursor.getString(_cursorIndexOfFbrefStatsJson);
             }
+            final String _tmpCompetitionStatsJson;
+            if (_cursor.isNull(_cursorIndexOfCompetitionStatsJson)) {
+              _tmpCompetitionStatsJson = null;
+            } else {
+              _tmpCompetitionStatsJson = _cursor.getString(_cursorIndexOfCompetitionStatsJson);
+            }
             final long _tmpLastUpdated;
             _tmpLastUpdated = _cursor.getLong(_cursorIndexOfLastUpdated);
-            _result = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpFbrefStatsJson,_tmpLastUpdated);
+            _result = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpLeague,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpMatchesPlayed,_tmpAppearances,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpPerformanceGameJson,_tmpFbrefStatsJson,_tmpCompetitionStatsJson,_tmpLastUpdated);
           } else {
             _result = null;
           }
@@ -1224,6 +1581,302 @@ public final class PlayerDao_Impl implements PlayerDao {
         }
       }
     }, arg1);
+  }
+
+  @Override
+  public Flow<List<PlayerEntity>> getAllPlayers() {
+    final String _sql = "SELECT * FROM cached_players";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"cached_players"}, new Callable<List<PlayerEntity>>() {
+      @Override
+      @NonNull
+      public List<PlayerEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTmId = CursorUtil.getColumnIndexOrThrow(_cursor, "tmId");
+          final int _cursorIndexOfFbrefSlug = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefSlug");
+          final int _cursorIndexOfFbrefId = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefId");
+          final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
+          final int _cursorIndexOfClub = CursorUtil.getColumnIndexOrThrow(_cursor, "club");
+          final int _cursorIndexOfLeague = CursorUtil.getColumnIndexOrThrow(_cursor, "league");
+          final int _cursorIndexOfAge = CursorUtil.getColumnIndexOrThrow(_cursor, "age");
+          final int _cursorIndexOfMarketValue = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValue");
+          final int _cursorIndexOfTalentScore = CursorUtil.getColumnIndexOrThrow(_cursor, "talentScore");
+          final int _cursorIndexOfHiddenGemScore = CursorUtil.getColumnIndexOrThrow(_cursor, "hiddenGemScore");
+          final int _cursorIndexOfPosition = CursorUtil.getColumnIndexOrThrow(_cursor, "position");
+          final int _cursorIndexOfPhotoUrl = CursorUtil.getColumnIndexOrThrow(_cursor, "photoUrl");
+          final int _cursorIndexOfIsRetired = CursorUtil.getColumnIndexOrThrow(_cursor, "isRetired");
+          final int _cursorIndexOfIsWatchlisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isWatchlisted");
+          final int _cursorIndexOfSeason = CursorUtil.getColumnIndexOrThrow(_cursor, "season");
+          final int _cursorIndexOfGoals = CursorUtil.getColumnIndexOrThrow(_cursor, "goals");
+          final int _cursorIndexOfAssists = CursorUtil.getColumnIndexOrThrow(_cursor, "assists");
+          final int _cursorIndexOfXG = CursorUtil.getColumnIndexOrThrow(_cursor, "xG");
+          final int _cursorIndexOfMinutes = CursorUtil.getColumnIndexOrThrow(_cursor, "minutes");
+          final int _cursorIndexOfMatchesPlayed = CursorUtil.getColumnIndexOrThrow(_cursor, "matchesPlayed");
+          final int _cursorIndexOfAppearances = CursorUtil.getColumnIndexOrThrow(_cursor, "appearances");
+          final int _cursorIndexOfGoalsConceded = CursorUtil.getColumnIndexOrThrow(_cursor, "goalsConceded");
+          final int _cursorIndexOfCleanSheets = CursorUtil.getColumnIndexOrThrow(_cursor, "cleanSheets");
+          final int _cursorIndexOfFoot = CursorUtil.getColumnIndexOrThrow(_cursor, "foot");
+          final int _cursorIndexOfShirtNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "shirtNumber");
+          final int _cursorIndexOfCitizenship = CursorUtil.getColumnIndexOrThrow(_cursor, "citizenship");
+          final int _cursorIndexOfContractExpires = CursorUtil.getColumnIndexOrThrow(_cursor, "contractExpires");
+          final int _cursorIndexOfBirthDate = CursorUtil.getColumnIndexOrThrow(_cursor, "birthDate");
+          final int _cursorIndexOfSeasonalStats = CursorUtil.getColumnIndexOrThrow(_cursor, "seasonalStats");
+          final int _cursorIndexOfDetailedStats = CursorUtil.getColumnIndexOrThrow(_cursor, "detailedStats");
+          final int _cursorIndexOfAchievements = CursorUtil.getColumnIndexOrThrow(_cursor, "achievements");
+          final int _cursorIndexOfMarketValueHistory = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValueHistory");
+          final int _cursorIndexOfTransfers = CursorUtil.getColumnIndexOrThrow(_cursor, "transfers");
+          final int _cursorIndexOfInjuries = CursorUtil.getColumnIndexOrThrow(_cursor, "injuries");
+          final int _cursorIndexOfRadarData = CursorUtil.getColumnIndexOrThrow(_cursor, "radarData");
+          final int _cursorIndexOfRecentPerformanceJson = CursorUtil.getColumnIndexOrThrow(_cursor, "recentPerformanceJson");
+          final int _cursorIndexOfPerformanceGameJson = CursorUtil.getColumnIndexOrThrow(_cursor, "performanceGameJson");
+          final int _cursorIndexOfFbrefStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefStatsJson");
+          final int _cursorIndexOfCompetitionStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "competitionStatsJson");
+          final int _cursorIndexOfLastUpdated = CursorUtil.getColumnIndexOrThrow(_cursor, "lastUpdated");
+          final List<PlayerEntity> _result = new ArrayList<PlayerEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final PlayerEntity _item;
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final String _tmpTmId;
+            if (_cursor.isNull(_cursorIndexOfTmId)) {
+              _tmpTmId = null;
+            } else {
+              _tmpTmId = _cursor.getString(_cursorIndexOfTmId);
+            }
+            final String _tmpFbrefSlug;
+            if (_cursor.isNull(_cursorIndexOfFbrefSlug)) {
+              _tmpFbrefSlug = null;
+            } else {
+              _tmpFbrefSlug = _cursor.getString(_cursorIndexOfFbrefSlug);
+            }
+            final String _tmpFbrefId;
+            if (_cursor.isNull(_cursorIndexOfFbrefId)) {
+              _tmpFbrefId = null;
+            } else {
+              _tmpFbrefId = _cursor.getString(_cursorIndexOfFbrefId);
+            }
+            final String _tmpName;
+            if (_cursor.isNull(_cursorIndexOfName)) {
+              _tmpName = null;
+            } else {
+              _tmpName = _cursor.getString(_cursorIndexOfName);
+            }
+            final String _tmpClub;
+            if (_cursor.isNull(_cursorIndexOfClub)) {
+              _tmpClub = null;
+            } else {
+              _tmpClub = _cursor.getString(_cursorIndexOfClub);
+            }
+            final String _tmpLeague;
+            if (_cursor.isNull(_cursorIndexOfLeague)) {
+              _tmpLeague = null;
+            } else {
+              _tmpLeague = _cursor.getString(_cursorIndexOfLeague);
+            }
+            final Integer _tmpAge;
+            if (_cursor.isNull(_cursorIndexOfAge)) {
+              _tmpAge = null;
+            } else {
+              _tmpAge = _cursor.getInt(_cursorIndexOfAge);
+            }
+            final Double _tmpMarketValue;
+            if (_cursor.isNull(_cursorIndexOfMarketValue)) {
+              _tmpMarketValue = null;
+            } else {
+              _tmpMarketValue = _cursor.getDouble(_cursorIndexOfMarketValue);
+            }
+            final double _tmpTalentScore;
+            _tmpTalentScore = _cursor.getDouble(_cursorIndexOfTalentScore);
+            final double _tmpHiddenGemScore;
+            _tmpHiddenGemScore = _cursor.getDouble(_cursorIndexOfHiddenGemScore);
+            final String _tmpPosition;
+            if (_cursor.isNull(_cursorIndexOfPosition)) {
+              _tmpPosition = null;
+            } else {
+              _tmpPosition = _cursor.getString(_cursorIndexOfPosition);
+            }
+            final String _tmpPhotoUrl;
+            if (_cursor.isNull(_cursorIndexOfPhotoUrl)) {
+              _tmpPhotoUrl = null;
+            } else {
+              _tmpPhotoUrl = _cursor.getString(_cursorIndexOfPhotoUrl);
+            }
+            final boolean _tmpIsRetired;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsRetired);
+            _tmpIsRetired = _tmp != 0;
+            final boolean _tmpIsWatchlisted;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsWatchlisted);
+            _tmpIsWatchlisted = _tmp_1 != 0;
+            final String _tmpSeason;
+            if (_cursor.isNull(_cursorIndexOfSeason)) {
+              _tmpSeason = null;
+            } else {
+              _tmpSeason = _cursor.getString(_cursorIndexOfSeason);
+            }
+            final Integer _tmpGoals;
+            if (_cursor.isNull(_cursorIndexOfGoals)) {
+              _tmpGoals = null;
+            } else {
+              _tmpGoals = _cursor.getInt(_cursorIndexOfGoals);
+            }
+            final Integer _tmpAssists;
+            if (_cursor.isNull(_cursorIndexOfAssists)) {
+              _tmpAssists = null;
+            } else {
+              _tmpAssists = _cursor.getInt(_cursorIndexOfAssists);
+            }
+            final Double _tmpXG;
+            if (_cursor.isNull(_cursorIndexOfXG)) {
+              _tmpXG = null;
+            } else {
+              _tmpXG = _cursor.getDouble(_cursorIndexOfXG);
+            }
+            final Integer _tmpMinutes;
+            if (_cursor.isNull(_cursorIndexOfMinutes)) {
+              _tmpMinutes = null;
+            } else {
+              _tmpMinutes = _cursor.getInt(_cursorIndexOfMinutes);
+            }
+            final Integer _tmpMatchesPlayed;
+            if (_cursor.isNull(_cursorIndexOfMatchesPlayed)) {
+              _tmpMatchesPlayed = null;
+            } else {
+              _tmpMatchesPlayed = _cursor.getInt(_cursorIndexOfMatchesPlayed);
+            }
+            final Integer _tmpAppearances;
+            if (_cursor.isNull(_cursorIndexOfAppearances)) {
+              _tmpAppearances = null;
+            } else {
+              _tmpAppearances = _cursor.getInt(_cursorIndexOfAppearances);
+            }
+            final Integer _tmpGoalsConceded;
+            if (_cursor.isNull(_cursorIndexOfGoalsConceded)) {
+              _tmpGoalsConceded = null;
+            } else {
+              _tmpGoalsConceded = _cursor.getInt(_cursorIndexOfGoalsConceded);
+            }
+            final Integer _tmpCleanSheets;
+            if (_cursor.isNull(_cursorIndexOfCleanSheets)) {
+              _tmpCleanSheets = null;
+            } else {
+              _tmpCleanSheets = _cursor.getInt(_cursorIndexOfCleanSheets);
+            }
+            final String _tmpFoot;
+            if (_cursor.isNull(_cursorIndexOfFoot)) {
+              _tmpFoot = null;
+            } else {
+              _tmpFoot = _cursor.getString(_cursorIndexOfFoot);
+            }
+            final String _tmpShirtNumber;
+            if (_cursor.isNull(_cursorIndexOfShirtNumber)) {
+              _tmpShirtNumber = null;
+            } else {
+              _tmpShirtNumber = _cursor.getString(_cursorIndexOfShirtNumber);
+            }
+            final String _tmpCitizenship;
+            if (_cursor.isNull(_cursorIndexOfCitizenship)) {
+              _tmpCitizenship = null;
+            } else {
+              _tmpCitizenship = _cursor.getString(_cursorIndexOfCitizenship);
+            }
+            final String _tmpContractExpires;
+            if (_cursor.isNull(_cursorIndexOfContractExpires)) {
+              _tmpContractExpires = null;
+            } else {
+              _tmpContractExpires = _cursor.getString(_cursorIndexOfContractExpires);
+            }
+            final String _tmpBirthDate;
+            if (_cursor.isNull(_cursorIndexOfBirthDate)) {
+              _tmpBirthDate = null;
+            } else {
+              _tmpBirthDate = _cursor.getString(_cursorIndexOfBirthDate);
+            }
+            final String _tmpSeasonalStats;
+            if (_cursor.isNull(_cursorIndexOfSeasonalStats)) {
+              _tmpSeasonalStats = null;
+            } else {
+              _tmpSeasonalStats = _cursor.getString(_cursorIndexOfSeasonalStats);
+            }
+            final String _tmpDetailedStats;
+            if (_cursor.isNull(_cursorIndexOfDetailedStats)) {
+              _tmpDetailedStats = null;
+            } else {
+              _tmpDetailedStats = _cursor.getString(_cursorIndexOfDetailedStats);
+            }
+            final String _tmpAchievements;
+            if (_cursor.isNull(_cursorIndexOfAchievements)) {
+              _tmpAchievements = null;
+            } else {
+              _tmpAchievements = _cursor.getString(_cursorIndexOfAchievements);
+            }
+            final String _tmpMarketValueHistory;
+            if (_cursor.isNull(_cursorIndexOfMarketValueHistory)) {
+              _tmpMarketValueHistory = null;
+            } else {
+              _tmpMarketValueHistory = _cursor.getString(_cursorIndexOfMarketValueHistory);
+            }
+            final String _tmpTransfers;
+            if (_cursor.isNull(_cursorIndexOfTransfers)) {
+              _tmpTransfers = null;
+            } else {
+              _tmpTransfers = _cursor.getString(_cursorIndexOfTransfers);
+            }
+            final String _tmpInjuries;
+            if (_cursor.isNull(_cursorIndexOfInjuries)) {
+              _tmpInjuries = null;
+            } else {
+              _tmpInjuries = _cursor.getString(_cursorIndexOfInjuries);
+            }
+            final String _tmpRadarData;
+            if (_cursor.isNull(_cursorIndexOfRadarData)) {
+              _tmpRadarData = null;
+            } else {
+              _tmpRadarData = _cursor.getString(_cursorIndexOfRadarData);
+            }
+            final String _tmpRecentPerformanceJson;
+            if (_cursor.isNull(_cursorIndexOfRecentPerformanceJson)) {
+              _tmpRecentPerformanceJson = null;
+            } else {
+              _tmpRecentPerformanceJson = _cursor.getString(_cursorIndexOfRecentPerformanceJson);
+            }
+            final String _tmpPerformanceGameJson;
+            if (_cursor.isNull(_cursorIndexOfPerformanceGameJson)) {
+              _tmpPerformanceGameJson = null;
+            } else {
+              _tmpPerformanceGameJson = _cursor.getString(_cursorIndexOfPerformanceGameJson);
+            }
+            final String _tmpFbrefStatsJson;
+            if (_cursor.isNull(_cursorIndexOfFbrefStatsJson)) {
+              _tmpFbrefStatsJson = null;
+            } else {
+              _tmpFbrefStatsJson = _cursor.getString(_cursorIndexOfFbrefStatsJson);
+            }
+            final String _tmpCompetitionStatsJson;
+            if (_cursor.isNull(_cursorIndexOfCompetitionStatsJson)) {
+              _tmpCompetitionStatsJson = null;
+            } else {
+              _tmpCompetitionStatsJson = _cursor.getString(_cursorIndexOfCompetitionStatsJson);
+            }
+            final long _tmpLastUpdated;
+            _tmpLastUpdated = _cursor.getLong(_cursorIndexOfLastUpdated);
+            _item = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpLeague,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpMatchesPlayed,_tmpAppearances,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpPerformanceGameJson,_tmpFbrefStatsJson,_tmpCompetitionStatsJson,_tmpLastUpdated);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
   }
 
   @Override
@@ -1249,6 +1902,7 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfFbrefId = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefId");
           final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
           final int _cursorIndexOfClub = CursorUtil.getColumnIndexOrThrow(_cursor, "club");
+          final int _cursorIndexOfLeague = CursorUtil.getColumnIndexOrThrow(_cursor, "league");
           final int _cursorIndexOfAge = CursorUtil.getColumnIndexOrThrow(_cursor, "age");
           final int _cursorIndexOfMarketValue = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValue");
           final int _cursorIndexOfTalentScore = CursorUtil.getColumnIndexOrThrow(_cursor, "talentScore");
@@ -1262,6 +1916,8 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfAssists = CursorUtil.getColumnIndexOrThrow(_cursor, "assists");
           final int _cursorIndexOfXG = CursorUtil.getColumnIndexOrThrow(_cursor, "xG");
           final int _cursorIndexOfMinutes = CursorUtil.getColumnIndexOrThrow(_cursor, "minutes");
+          final int _cursorIndexOfMatchesPlayed = CursorUtil.getColumnIndexOrThrow(_cursor, "matchesPlayed");
+          final int _cursorIndexOfAppearances = CursorUtil.getColumnIndexOrThrow(_cursor, "appearances");
           final int _cursorIndexOfGoalsConceded = CursorUtil.getColumnIndexOrThrow(_cursor, "goalsConceded");
           final int _cursorIndexOfCleanSheets = CursorUtil.getColumnIndexOrThrow(_cursor, "cleanSheets");
           final int _cursorIndexOfFoot = CursorUtil.getColumnIndexOrThrow(_cursor, "foot");
@@ -1277,7 +1933,9 @@ public final class PlayerDao_Impl implements PlayerDao {
           final int _cursorIndexOfInjuries = CursorUtil.getColumnIndexOrThrow(_cursor, "injuries");
           final int _cursorIndexOfRadarData = CursorUtil.getColumnIndexOrThrow(_cursor, "radarData");
           final int _cursorIndexOfRecentPerformanceJson = CursorUtil.getColumnIndexOrThrow(_cursor, "recentPerformanceJson");
+          final int _cursorIndexOfPerformanceGameJson = CursorUtil.getColumnIndexOrThrow(_cursor, "performanceGameJson");
           final int _cursorIndexOfFbrefStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefStatsJson");
+          final int _cursorIndexOfCompetitionStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "competitionStatsJson");
           final int _cursorIndexOfLastUpdated = CursorUtil.getColumnIndexOrThrow(_cursor, "lastUpdated");
           final PlayerEntity _result;
           if (_cursor.moveToFirst()) {
@@ -1312,6 +1970,12 @@ public final class PlayerDao_Impl implements PlayerDao {
               _tmpClub = null;
             } else {
               _tmpClub = _cursor.getString(_cursorIndexOfClub);
+            }
+            final String _tmpLeague;
+            if (_cursor.isNull(_cursorIndexOfLeague)) {
+              _tmpLeague = null;
+            } else {
+              _tmpLeague = _cursor.getString(_cursorIndexOfLeague);
             }
             final Integer _tmpAge;
             if (_cursor.isNull(_cursorIndexOfAge)) {
@@ -1378,6 +2042,18 @@ public final class PlayerDao_Impl implements PlayerDao {
               _tmpMinutes = null;
             } else {
               _tmpMinutes = _cursor.getInt(_cursorIndexOfMinutes);
+            }
+            final Integer _tmpMatchesPlayed;
+            if (_cursor.isNull(_cursorIndexOfMatchesPlayed)) {
+              _tmpMatchesPlayed = null;
+            } else {
+              _tmpMatchesPlayed = _cursor.getInt(_cursorIndexOfMatchesPlayed);
+            }
+            final Integer _tmpAppearances;
+            if (_cursor.isNull(_cursorIndexOfAppearances)) {
+              _tmpAppearances = null;
+            } else {
+              _tmpAppearances = _cursor.getInt(_cursorIndexOfAppearances);
             }
             final Integer _tmpGoalsConceded;
             if (_cursor.isNull(_cursorIndexOfGoalsConceded)) {
@@ -1469,15 +2145,27 @@ public final class PlayerDao_Impl implements PlayerDao {
             } else {
               _tmpRecentPerformanceJson = _cursor.getString(_cursorIndexOfRecentPerformanceJson);
             }
+            final String _tmpPerformanceGameJson;
+            if (_cursor.isNull(_cursorIndexOfPerformanceGameJson)) {
+              _tmpPerformanceGameJson = null;
+            } else {
+              _tmpPerformanceGameJson = _cursor.getString(_cursorIndexOfPerformanceGameJson);
+            }
             final String _tmpFbrefStatsJson;
             if (_cursor.isNull(_cursorIndexOfFbrefStatsJson)) {
               _tmpFbrefStatsJson = null;
             } else {
               _tmpFbrefStatsJson = _cursor.getString(_cursorIndexOfFbrefStatsJson);
             }
+            final String _tmpCompetitionStatsJson;
+            if (_cursor.isNull(_cursorIndexOfCompetitionStatsJson)) {
+              _tmpCompetitionStatsJson = null;
+            } else {
+              _tmpCompetitionStatsJson = _cursor.getString(_cursorIndexOfCompetitionStatsJson);
+            }
             final long _tmpLastUpdated;
             _tmpLastUpdated = _cursor.getLong(_cursorIndexOfLastUpdated);
-            _result = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpFbrefStatsJson,_tmpLastUpdated);
+            _result = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpLeague,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpMatchesPlayed,_tmpAppearances,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpPerformanceGameJson,_tmpFbrefStatsJson,_tmpCompetitionStatsJson,_tmpLastUpdated);
           } else {
             _result = null;
           }
@@ -1596,6 +2284,380 @@ public final class PlayerDao_Impl implements PlayerDao {
         }
       }
     }, arg1);
+  }
+
+  @Override
+  public Flow<List<String>> getAvailableLeagues() {
+    final String _sql = "SELECT DISTINCT league FROM cached_players WHERE league IS NOT NULL";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 0);
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"cached_players"}, new Callable<List<String>>() {
+      @Override
+      @NonNull
+      public List<String> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final List<String> _result = new ArrayList<String>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final String _item;
+            if (_cursor.isNull(0)) {
+              _item = null;
+            } else {
+              _item = _cursor.getString(0);
+            }
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<String>> getTeamsInLeague(final String leagueName) {
+    final String _sql = "SELECT DISTINCT club FROM cached_players WHERE league = ?";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    if (leagueName == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, leagueName);
+    }
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"cached_players"}, new Callable<List<String>>() {
+      @Override
+      @NonNull
+      public List<String> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final List<String> _result = new ArrayList<String>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final String _item;
+            if (_cursor.isNull(0)) {
+              _item = null;
+            } else {
+              _item = _cursor.getString(0);
+            }
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
+  }
+
+  @Override
+  public Flow<List<PlayerEntity>> getPlayersInClub(final String clubName) {
+    final String _sql = "SELECT * FROM cached_players WHERE club = ?";
+    final RoomSQLiteQuery _statement = RoomSQLiteQuery.acquire(_sql, 1);
+    int _argIndex = 1;
+    if (clubName == null) {
+      _statement.bindNull(_argIndex);
+    } else {
+      _statement.bindString(_argIndex, clubName);
+    }
+    return CoroutinesRoom.createFlow(__db, false, new String[] {"cached_players"}, new Callable<List<PlayerEntity>>() {
+      @Override
+      @NonNull
+      public List<PlayerEntity> call() throws Exception {
+        final Cursor _cursor = DBUtil.query(__db, _statement, false, null);
+        try {
+          final int _cursorIndexOfId = CursorUtil.getColumnIndexOrThrow(_cursor, "id");
+          final int _cursorIndexOfTmId = CursorUtil.getColumnIndexOrThrow(_cursor, "tmId");
+          final int _cursorIndexOfFbrefSlug = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefSlug");
+          final int _cursorIndexOfFbrefId = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefId");
+          final int _cursorIndexOfName = CursorUtil.getColumnIndexOrThrow(_cursor, "name");
+          final int _cursorIndexOfClub = CursorUtil.getColumnIndexOrThrow(_cursor, "club");
+          final int _cursorIndexOfLeague = CursorUtil.getColumnIndexOrThrow(_cursor, "league");
+          final int _cursorIndexOfAge = CursorUtil.getColumnIndexOrThrow(_cursor, "age");
+          final int _cursorIndexOfMarketValue = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValue");
+          final int _cursorIndexOfTalentScore = CursorUtil.getColumnIndexOrThrow(_cursor, "talentScore");
+          final int _cursorIndexOfHiddenGemScore = CursorUtil.getColumnIndexOrThrow(_cursor, "hiddenGemScore");
+          final int _cursorIndexOfPosition = CursorUtil.getColumnIndexOrThrow(_cursor, "position");
+          final int _cursorIndexOfPhotoUrl = CursorUtil.getColumnIndexOrThrow(_cursor, "photoUrl");
+          final int _cursorIndexOfIsRetired = CursorUtil.getColumnIndexOrThrow(_cursor, "isRetired");
+          final int _cursorIndexOfIsWatchlisted = CursorUtil.getColumnIndexOrThrow(_cursor, "isWatchlisted");
+          final int _cursorIndexOfSeason = CursorUtil.getColumnIndexOrThrow(_cursor, "season");
+          final int _cursorIndexOfGoals = CursorUtil.getColumnIndexOrThrow(_cursor, "goals");
+          final int _cursorIndexOfAssists = CursorUtil.getColumnIndexOrThrow(_cursor, "assists");
+          final int _cursorIndexOfXG = CursorUtil.getColumnIndexOrThrow(_cursor, "xG");
+          final int _cursorIndexOfMinutes = CursorUtil.getColumnIndexOrThrow(_cursor, "minutes");
+          final int _cursorIndexOfMatchesPlayed = CursorUtil.getColumnIndexOrThrow(_cursor, "matchesPlayed");
+          final int _cursorIndexOfAppearances = CursorUtil.getColumnIndexOrThrow(_cursor, "appearances");
+          final int _cursorIndexOfGoalsConceded = CursorUtil.getColumnIndexOrThrow(_cursor, "goalsConceded");
+          final int _cursorIndexOfCleanSheets = CursorUtil.getColumnIndexOrThrow(_cursor, "cleanSheets");
+          final int _cursorIndexOfFoot = CursorUtil.getColumnIndexOrThrow(_cursor, "foot");
+          final int _cursorIndexOfShirtNumber = CursorUtil.getColumnIndexOrThrow(_cursor, "shirtNumber");
+          final int _cursorIndexOfCitizenship = CursorUtil.getColumnIndexOrThrow(_cursor, "citizenship");
+          final int _cursorIndexOfContractExpires = CursorUtil.getColumnIndexOrThrow(_cursor, "contractExpires");
+          final int _cursorIndexOfBirthDate = CursorUtil.getColumnIndexOrThrow(_cursor, "birthDate");
+          final int _cursorIndexOfSeasonalStats = CursorUtil.getColumnIndexOrThrow(_cursor, "seasonalStats");
+          final int _cursorIndexOfDetailedStats = CursorUtil.getColumnIndexOrThrow(_cursor, "detailedStats");
+          final int _cursorIndexOfAchievements = CursorUtil.getColumnIndexOrThrow(_cursor, "achievements");
+          final int _cursorIndexOfMarketValueHistory = CursorUtil.getColumnIndexOrThrow(_cursor, "marketValueHistory");
+          final int _cursorIndexOfTransfers = CursorUtil.getColumnIndexOrThrow(_cursor, "transfers");
+          final int _cursorIndexOfInjuries = CursorUtil.getColumnIndexOrThrow(_cursor, "injuries");
+          final int _cursorIndexOfRadarData = CursorUtil.getColumnIndexOrThrow(_cursor, "radarData");
+          final int _cursorIndexOfRecentPerformanceJson = CursorUtil.getColumnIndexOrThrow(_cursor, "recentPerformanceJson");
+          final int _cursorIndexOfPerformanceGameJson = CursorUtil.getColumnIndexOrThrow(_cursor, "performanceGameJson");
+          final int _cursorIndexOfFbrefStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "fbrefStatsJson");
+          final int _cursorIndexOfCompetitionStatsJson = CursorUtil.getColumnIndexOrThrow(_cursor, "competitionStatsJson");
+          final int _cursorIndexOfLastUpdated = CursorUtil.getColumnIndexOrThrow(_cursor, "lastUpdated");
+          final List<PlayerEntity> _result = new ArrayList<PlayerEntity>(_cursor.getCount());
+          while (_cursor.moveToNext()) {
+            final PlayerEntity _item;
+            final long _tmpId;
+            _tmpId = _cursor.getLong(_cursorIndexOfId);
+            final String _tmpTmId;
+            if (_cursor.isNull(_cursorIndexOfTmId)) {
+              _tmpTmId = null;
+            } else {
+              _tmpTmId = _cursor.getString(_cursorIndexOfTmId);
+            }
+            final String _tmpFbrefSlug;
+            if (_cursor.isNull(_cursorIndexOfFbrefSlug)) {
+              _tmpFbrefSlug = null;
+            } else {
+              _tmpFbrefSlug = _cursor.getString(_cursorIndexOfFbrefSlug);
+            }
+            final String _tmpFbrefId;
+            if (_cursor.isNull(_cursorIndexOfFbrefId)) {
+              _tmpFbrefId = null;
+            } else {
+              _tmpFbrefId = _cursor.getString(_cursorIndexOfFbrefId);
+            }
+            final String _tmpName;
+            if (_cursor.isNull(_cursorIndexOfName)) {
+              _tmpName = null;
+            } else {
+              _tmpName = _cursor.getString(_cursorIndexOfName);
+            }
+            final String _tmpClub;
+            if (_cursor.isNull(_cursorIndexOfClub)) {
+              _tmpClub = null;
+            } else {
+              _tmpClub = _cursor.getString(_cursorIndexOfClub);
+            }
+            final String _tmpLeague;
+            if (_cursor.isNull(_cursorIndexOfLeague)) {
+              _tmpLeague = null;
+            } else {
+              _tmpLeague = _cursor.getString(_cursorIndexOfLeague);
+            }
+            final Integer _tmpAge;
+            if (_cursor.isNull(_cursorIndexOfAge)) {
+              _tmpAge = null;
+            } else {
+              _tmpAge = _cursor.getInt(_cursorIndexOfAge);
+            }
+            final Double _tmpMarketValue;
+            if (_cursor.isNull(_cursorIndexOfMarketValue)) {
+              _tmpMarketValue = null;
+            } else {
+              _tmpMarketValue = _cursor.getDouble(_cursorIndexOfMarketValue);
+            }
+            final double _tmpTalentScore;
+            _tmpTalentScore = _cursor.getDouble(_cursorIndexOfTalentScore);
+            final double _tmpHiddenGemScore;
+            _tmpHiddenGemScore = _cursor.getDouble(_cursorIndexOfHiddenGemScore);
+            final String _tmpPosition;
+            if (_cursor.isNull(_cursorIndexOfPosition)) {
+              _tmpPosition = null;
+            } else {
+              _tmpPosition = _cursor.getString(_cursorIndexOfPosition);
+            }
+            final String _tmpPhotoUrl;
+            if (_cursor.isNull(_cursorIndexOfPhotoUrl)) {
+              _tmpPhotoUrl = null;
+            } else {
+              _tmpPhotoUrl = _cursor.getString(_cursorIndexOfPhotoUrl);
+            }
+            final boolean _tmpIsRetired;
+            final int _tmp;
+            _tmp = _cursor.getInt(_cursorIndexOfIsRetired);
+            _tmpIsRetired = _tmp != 0;
+            final boolean _tmpIsWatchlisted;
+            final int _tmp_1;
+            _tmp_1 = _cursor.getInt(_cursorIndexOfIsWatchlisted);
+            _tmpIsWatchlisted = _tmp_1 != 0;
+            final String _tmpSeason;
+            if (_cursor.isNull(_cursorIndexOfSeason)) {
+              _tmpSeason = null;
+            } else {
+              _tmpSeason = _cursor.getString(_cursorIndexOfSeason);
+            }
+            final Integer _tmpGoals;
+            if (_cursor.isNull(_cursorIndexOfGoals)) {
+              _tmpGoals = null;
+            } else {
+              _tmpGoals = _cursor.getInt(_cursorIndexOfGoals);
+            }
+            final Integer _tmpAssists;
+            if (_cursor.isNull(_cursorIndexOfAssists)) {
+              _tmpAssists = null;
+            } else {
+              _tmpAssists = _cursor.getInt(_cursorIndexOfAssists);
+            }
+            final Double _tmpXG;
+            if (_cursor.isNull(_cursorIndexOfXG)) {
+              _tmpXG = null;
+            } else {
+              _tmpXG = _cursor.getDouble(_cursorIndexOfXG);
+            }
+            final Integer _tmpMinutes;
+            if (_cursor.isNull(_cursorIndexOfMinutes)) {
+              _tmpMinutes = null;
+            } else {
+              _tmpMinutes = _cursor.getInt(_cursorIndexOfMinutes);
+            }
+            final Integer _tmpMatchesPlayed;
+            if (_cursor.isNull(_cursorIndexOfMatchesPlayed)) {
+              _tmpMatchesPlayed = null;
+            } else {
+              _tmpMatchesPlayed = _cursor.getInt(_cursorIndexOfMatchesPlayed);
+            }
+            final Integer _tmpAppearances;
+            if (_cursor.isNull(_cursorIndexOfAppearances)) {
+              _tmpAppearances = null;
+            } else {
+              _tmpAppearances = _cursor.getInt(_cursorIndexOfAppearances);
+            }
+            final Integer _tmpGoalsConceded;
+            if (_cursor.isNull(_cursorIndexOfGoalsConceded)) {
+              _tmpGoalsConceded = null;
+            } else {
+              _tmpGoalsConceded = _cursor.getInt(_cursorIndexOfGoalsConceded);
+            }
+            final Integer _tmpCleanSheets;
+            if (_cursor.isNull(_cursorIndexOfCleanSheets)) {
+              _tmpCleanSheets = null;
+            } else {
+              _tmpCleanSheets = _cursor.getInt(_cursorIndexOfCleanSheets);
+            }
+            final String _tmpFoot;
+            if (_cursor.isNull(_cursorIndexOfFoot)) {
+              _tmpFoot = null;
+            } else {
+              _tmpFoot = _cursor.getString(_cursorIndexOfFoot);
+            }
+            final String _tmpShirtNumber;
+            if (_cursor.isNull(_cursorIndexOfShirtNumber)) {
+              _tmpShirtNumber = null;
+            } else {
+              _tmpShirtNumber = _cursor.getString(_cursorIndexOfShirtNumber);
+            }
+            final String _tmpCitizenship;
+            if (_cursor.isNull(_cursorIndexOfCitizenship)) {
+              _tmpCitizenship = null;
+            } else {
+              _tmpCitizenship = _cursor.getString(_cursorIndexOfCitizenship);
+            }
+            final String _tmpContractExpires;
+            if (_cursor.isNull(_cursorIndexOfContractExpires)) {
+              _tmpContractExpires = null;
+            } else {
+              _tmpContractExpires = _cursor.getString(_cursorIndexOfContractExpires);
+            }
+            final String _tmpBirthDate;
+            if (_cursor.isNull(_cursorIndexOfBirthDate)) {
+              _tmpBirthDate = null;
+            } else {
+              _tmpBirthDate = _cursor.getString(_cursorIndexOfBirthDate);
+            }
+            final String _tmpSeasonalStats;
+            if (_cursor.isNull(_cursorIndexOfSeasonalStats)) {
+              _tmpSeasonalStats = null;
+            } else {
+              _tmpSeasonalStats = _cursor.getString(_cursorIndexOfSeasonalStats);
+            }
+            final String _tmpDetailedStats;
+            if (_cursor.isNull(_cursorIndexOfDetailedStats)) {
+              _tmpDetailedStats = null;
+            } else {
+              _tmpDetailedStats = _cursor.getString(_cursorIndexOfDetailedStats);
+            }
+            final String _tmpAchievements;
+            if (_cursor.isNull(_cursorIndexOfAchievements)) {
+              _tmpAchievements = null;
+            } else {
+              _tmpAchievements = _cursor.getString(_cursorIndexOfAchievements);
+            }
+            final String _tmpMarketValueHistory;
+            if (_cursor.isNull(_cursorIndexOfMarketValueHistory)) {
+              _tmpMarketValueHistory = null;
+            } else {
+              _tmpMarketValueHistory = _cursor.getString(_cursorIndexOfMarketValueHistory);
+            }
+            final String _tmpTransfers;
+            if (_cursor.isNull(_cursorIndexOfTransfers)) {
+              _tmpTransfers = null;
+            } else {
+              _tmpTransfers = _cursor.getString(_cursorIndexOfTransfers);
+            }
+            final String _tmpInjuries;
+            if (_cursor.isNull(_cursorIndexOfInjuries)) {
+              _tmpInjuries = null;
+            } else {
+              _tmpInjuries = _cursor.getString(_cursorIndexOfInjuries);
+            }
+            final String _tmpRadarData;
+            if (_cursor.isNull(_cursorIndexOfRadarData)) {
+              _tmpRadarData = null;
+            } else {
+              _tmpRadarData = _cursor.getString(_cursorIndexOfRadarData);
+            }
+            final String _tmpRecentPerformanceJson;
+            if (_cursor.isNull(_cursorIndexOfRecentPerformanceJson)) {
+              _tmpRecentPerformanceJson = null;
+            } else {
+              _tmpRecentPerformanceJson = _cursor.getString(_cursorIndexOfRecentPerformanceJson);
+            }
+            final String _tmpPerformanceGameJson;
+            if (_cursor.isNull(_cursorIndexOfPerformanceGameJson)) {
+              _tmpPerformanceGameJson = null;
+            } else {
+              _tmpPerformanceGameJson = _cursor.getString(_cursorIndexOfPerformanceGameJson);
+            }
+            final String _tmpFbrefStatsJson;
+            if (_cursor.isNull(_cursorIndexOfFbrefStatsJson)) {
+              _tmpFbrefStatsJson = null;
+            } else {
+              _tmpFbrefStatsJson = _cursor.getString(_cursorIndexOfFbrefStatsJson);
+            }
+            final String _tmpCompetitionStatsJson;
+            if (_cursor.isNull(_cursorIndexOfCompetitionStatsJson)) {
+              _tmpCompetitionStatsJson = null;
+            } else {
+              _tmpCompetitionStatsJson = _cursor.getString(_cursorIndexOfCompetitionStatsJson);
+            }
+            final long _tmpLastUpdated;
+            _tmpLastUpdated = _cursor.getLong(_cursorIndexOfLastUpdated);
+            _item = new PlayerEntity(_tmpId,_tmpTmId,_tmpFbrefSlug,_tmpFbrefId,_tmpName,_tmpClub,_tmpLeague,_tmpAge,_tmpMarketValue,_tmpTalentScore,_tmpHiddenGemScore,_tmpPosition,_tmpPhotoUrl,_tmpIsRetired,_tmpIsWatchlisted,_tmpSeason,_tmpGoals,_tmpAssists,_tmpXG,_tmpMinutes,_tmpMatchesPlayed,_tmpAppearances,_tmpGoalsConceded,_tmpCleanSheets,_tmpFoot,_tmpShirtNumber,_tmpCitizenship,_tmpContractExpires,_tmpBirthDate,_tmpSeasonalStats,_tmpDetailedStats,_tmpAchievements,_tmpMarketValueHistory,_tmpTransfers,_tmpInjuries,_tmpRadarData,_tmpRecentPerformanceJson,_tmpPerformanceGameJson,_tmpFbrefStatsJson,_tmpCompetitionStatsJson,_tmpLastUpdated);
+            _result.add(_item);
+          }
+          return _result;
+        } finally {
+          _cursor.close();
+        }
+      }
+
+      @Override
+      protected void finalize() {
+        _statement.release();
+      }
+    });
   }
 
   @NonNull

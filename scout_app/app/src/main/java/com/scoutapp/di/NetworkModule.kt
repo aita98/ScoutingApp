@@ -3,6 +3,7 @@ package com.scoutapp.di
 import com.scoutapp.data.api.ScoutApiService
 import com.scoutapp.data.api.TransfermarktApiService
 import com.scoutapp.data.api.ApiFootballService
+import com.scoutapp.data.api.GroqApiService
 import com.scoutapp.data.api.fbref.FbrefApi
 import com.google.gson.Gson
 import dagger.Module
@@ -83,6 +84,22 @@ object NetworkModule {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
     }
+
+    @Provides
+    @Singleton
+    @Named("GroqRetrofit")
+    fun provideGroqRetrofit(okHttpClient: OkHttpClient): Retrofit {
+        return Retrofit.Builder()
+            .baseUrl("https://api.groq.com/openai/v1/")
+            .client(okHttpClient)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+    }
+
+    @Provides
+    @Singleton
+    fun provideGroqApiService(@Named("GroqRetrofit") retrofit: Retrofit): GroqApiService =
+        retrofit.create(GroqApiService::class.java)
 
     @Provides
     @Singleton

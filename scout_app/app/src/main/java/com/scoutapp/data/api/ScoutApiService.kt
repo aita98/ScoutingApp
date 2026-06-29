@@ -28,6 +28,9 @@ interface ScoutApiService {
     @GET("api/players/{id}/radar")
     suspend fun getPlayerRadar(@Path("id") id: String): RadarResponse
 
+    @GET("api/players/{id}/performance")
+    suspend fun getPlayerPerformance(@Path("id") id: String): CompetitionStatsResponse
+
     @GET("api/leagues")
     suspend fun getLeagues(): List<LeagueResponse>
 
@@ -158,6 +161,8 @@ data class PlayerResponse(
     val keyPasses: Int? = null,
     val progressivePasses: Int? = null,
     val progressiveCarries: Int? = null,
+    val matchesPlayed: Int? = null,
+    val appearances: Int? = null,
 
     // Goalkeeper specific
     val goalsConceded: Int? = null,
@@ -202,4 +207,54 @@ data class ScoutEventResponse(
     val description: String?,
     val createdAt: String?,
     val player: PlayerResponse?
+)
+
+data class CompetitionStatsResponse(
+    val player: String?,
+    val season: Int?,
+    val competitions: Map<String, CompetitionData>?
+)
+
+data class CompetitionData(
+    val competitionName: String? = null,
+    val competitionIconUrl: String? = null,
+    val games: List<GameStats>?
+)
+
+data class GameStats(
+    val gameId: String?,
+    val date: GameDate? = null,
+    val minutes: Int?,
+    val isStarting: Boolean?,
+    val goals: Int?,
+    val assists: Int?,
+    val yellow: Int?,
+    val secondYellow: Int? = null,
+    val red: Int?,
+    val tackles: Int? = null,
+    val tacklesWon: Int? = null,
+    val tacklesLost: Int? = null,
+    val groundDuels: Int? = null,
+    val groundDuelsWon: Int? = null,
+    val groundDuelsLost: Int? = null,
+    val aerialDuels: Int? = null,
+    val aerialDuelsWon: Int? = null,
+    val aerialDuelsLost: Int? = null,
+    val passes: Int? = null,
+    val passesReached: Int? = null,
+    val passesFailed: Int? = null,
+    val crosses: Int? = null,
+    val crossesReached: Int? = null,
+    val crossesFailed: Int? = null,
+    val longBalls: Int? = null,
+    val longBallsReached: Int? = null,
+    val longBallsFailed: Int? = null,
+    val shirtNumber: Int? = null,
+    val isCaptain: Boolean? = false,
+    val participationState: String?
+)
+
+data class GameDate(
+    val dateTimeUTC: String?,
+    val isTimeDefined: Boolean?
 )

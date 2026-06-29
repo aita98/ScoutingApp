@@ -10,6 +10,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.scoutapp.data.api.ScoutEventResponse
 import androidx.compose.ui.graphics.Color
+import com.scoutapp.ui.theme.GemCyan
+import com.scoutapp.ui.theme.TalentGold
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Refresh
@@ -62,12 +64,18 @@ fun EventCard(event: ScoutEventResponse) {
             Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween) {
                 val type = event.eventType ?: "INFO"
                 Text(
-                    text = type,
+                    text = when(type) {
+                        "NEW_CONS_PLAYER" -> "TOP PROSPECT"
+                        "NEW_GEM_PLAYER" -> "HIDDEN GEM"
+                        else -> type
+                    },
                     style = MaterialTheme.typography.labelLarge,
                     color = when(type) {
                         "PERFORMANCE" -> Color(0xFF4CAF50)
                         "TRANSFER" -> Color(0xFF2196F3)
                         "INJURY" -> Color(0xFFF44336)
+                        "NEW_CONS_PLAYER" -> TalentGold
+                        "NEW_GEM_PLAYER" -> GemCyan
                         else -> MaterialTheme.colorScheme.primary
                     }
                 )

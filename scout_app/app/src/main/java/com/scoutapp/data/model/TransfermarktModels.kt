@@ -312,3 +312,13 @@ data class TransfermarktMarketValuePoint(
     @SerializedName("clubName")
     val clubName: String?
 )
+
+data class CompetitionPerformance(
+    val competitionId: String,
+    val competitionName: String,
+    val appearances: Int,
+    val goals: Int,
+    val assists: Int,
+    val minutesPlayed: Int,
+    val competitionImageUrl: String? = null
+)

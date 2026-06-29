@@ -26,6 +26,8 @@ import hilt_aggregated_deps._com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltMo
 import hilt_aggregated_deps._com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_LeaguesViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_LeaguesViewModel_HiltModules_KeyModule;
+import hilt_aggregated_deps._com_scoutapp_ui_screens_PlayerListViewModel_HiltModules_BindsModule;
+import hilt_aggregated_deps._com_scoutapp_ui_screens_PlayerListViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_TeamDetailViewModel_HiltModules_BindsModule;
 import hilt_aggregated_deps._com_scoutapp_ui_screens_TeamDetailViewModel_HiltModules_KeyModule;
 import hilt_aggregated_deps._com_scoutapp_viewmodel_AIScoutViewModel_HiltModules_BindsModule;
@@ -85,6 +87,8 @@ import hilt_aggregated_deps._dagger_hilt_android_internal_modules_HiltWrapper_Ac
         _com_scoutapp_ui_screens_LeagueTeamsViewModel_HiltModules_KeyModule.class,
         _com_scoutapp_ui_screens_LeaguesViewModel_HiltModules_BindsModule.class,
         _com_scoutapp_ui_screens_LeaguesViewModel_HiltModules_KeyModule.class,
+        _com_scoutapp_ui_screens_PlayerListViewModel_HiltModules_BindsModule.class,
+        _com_scoutapp_ui_screens_PlayerListViewModel_HiltModules_KeyModule.class,
         _com_scoutapp_ui_screens_TeamDetailViewModel_HiltModules_BindsModule.class,
         _com_scoutapp_ui_screens_TeamDetailViewModel_HiltModules_KeyModule.class,
         _com_scoutapp_viewmodel_AIScoutViewModel_HiltModules_BindsModule.class,

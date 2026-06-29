@@ -1,10 +1,11 @@
-#Sat Jun 27 15:16:28 CEST 2026
+#Mon Jun 29 12:09:56 CEST 2026
 base.0=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes.dex
 base.1=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\0\\classes.dex
 base.10=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\5\\classes.dex
 base.11=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\6\\classes.dex
 base.12=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\7\\classes.dex
 base.13=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes2.dex
+base.14=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeExtDexDebug\\classes3.dex
 base.2=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\10\\classes.dex
 base.3=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\11\\classes.dex
 base.4=D\:\\Progetti\\FootballScouting\\scout_app\\app\\build\\intermediates\\dex\\debug\\mergeProjectDexDebug\\12\\classes.dex
@@ -19,6 +20,7 @@ path.10=5/classes.dex
 path.11=6/classes.dex
 path.12=7/classes.dex
 path.13=classes2.dex
+path.14=classes3.dex
 path.2=10/classes.dex
 path.3=11/classes.dex
 path.4=12/classes.dex
@@ -33,6 +35,7 @@ renamed.10=classes11.dex
 renamed.11=classes12.dex
 renamed.12=classes13.dex
 renamed.13=classes14.dex
+renamed.14=classes15.dex
 renamed.2=classes3.dex
 renamed.3=classes4.dex
 renamed.4=classes5.dex

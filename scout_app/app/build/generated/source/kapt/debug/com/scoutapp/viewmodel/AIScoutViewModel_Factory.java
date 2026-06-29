@@ -1,5 +1,6 @@
 package com.scoutapp.viewmodel;
 
+import com.scoutapp.data.api.GroqService;
 import com.scoutapp.data.api.ScoutApiService;
 import dagger.internal.DaggerGenerated;
 import dagger.internal.Factory;
@@ -25,20 +26,25 @@ import javax.inject.Provider;
 public final class AIScoutViewModel_Factory implements Factory<AIScoutViewModel> {
   private final Provider<ScoutApiService> apiServiceProvider;
 
-  public AIScoutViewModel_Factory(Provider<ScoutApiService> apiServiceProvider) {
+  private final Provider<GroqService> groqServiceProvider;
+
+  public AIScoutViewModel_Factory(Provider<ScoutApiService> apiServiceProvider,
+      Provider<GroqService> groqServiceProvider) {
     this.apiServiceProvider = apiServiceProvider;
+    this.groqServiceProvider = groqServiceProvider;
   }
 
   @Override
   public AIScoutViewModel get() {
-    return newInstance(apiServiceProvider.get());
+    return newInstance(apiServiceProvider.get(), groqServiceProvider.get());
   }
 
-  public static AIScoutViewModel_Factory create(Provider<ScoutApiService> apiServiceProvider) {
-    return new AIScoutViewModel_Factory(apiServiceProvider);
+  public static AIScoutViewModel_Factory create(Provider<ScoutApiService> apiServiceProvider,
+      Provider<GroqService> groqServiceProvider) {
+    return new AIScoutViewModel_Factory(apiServiceProvider, groqServiceProvider);
   }
 
-  public static AIScoutViewModel newInstance(ScoutApiService apiService) {
-    return new AIScoutViewModel(apiService);
+  public static AIScoutViewModel newInstance(ScoutApiService apiService, GroqService groqService) {
+    return new AIScoutViewModel(apiService, groqService);
   }
 }

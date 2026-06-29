@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.scoutapp.data.api.PlayerResponse
 import com.scoutapp.ui.components.PlayerCard
+import com.scoutapp.utils.formatMarketValue
 
 @Composable
 fun PlayerListScreen(
@@ -48,6 +49,9 @@ fun PlayerListScreen(
                         name = player.name ?: "N/A",
                         club = player.club ?: "N/A",
                         score = (if (isGem) player.hiddenGemScore else player.talentScore) ?: 0.0,
+                        age = player.age,
+                        marketValue = player.marketValueDisplay ?: formatMarketValue(player.marketValue),
+                        photoUrl = player.photoUrl,
                         isGem = isGem,
                         onClick = { 
                             val navId = if (player.tmId != null && player.tmId != "0" && player.tmId != "") player.tmId else player.id.toString()
